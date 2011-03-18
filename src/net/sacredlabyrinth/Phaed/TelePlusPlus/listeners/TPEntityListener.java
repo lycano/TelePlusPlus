@@ -49,7 +49,7 @@ public class TPEntityListener extends EntityListener
 		Entity entity = sub.getEntity();
 		ItemStack item = player.getItemInHand();
 		
-		if (item.getType().equals(Material.BONE) && plugin.pm.hasPermission(player, "tpp.mod.bone"))
+		if (item.getType().equals(Material.BONE) && plugin.pm.hasPermission(player, plugin.pm.bone))
 		{
 		    event.setCancelled(true);
 		    

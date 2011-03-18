@@ -27,7 +27,7 @@ public class TPBlockListener extends BlockListener
 	Player player = event.getPlayer();
 	ItemStack item = player.getItemInHand();
 	
-	if (item.getType().equals(Material.BONE) && plugin.pm.hasPermission(player, "tpp.mod.bone"))
+	if (item.getType().equals(Material.BONE) && plugin.pm.hasPermission(player, plugin.pm.bone))
 	{
 	    if(!plugin.bm.addBonedBlock(player, block))
 	    {

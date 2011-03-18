@@ -43,22 +43,22 @@ public class CommandManager
 	
 	if (helpPlugin != null)
 	{
-	    helpPlugin.registerCommand("tp [player]", "Teleport to another player", plugin, true, "tpp.tp.to");
-	    helpPlugin.registerCommand("tp [x] [y] [z]", "Teleport to coordinates", plugin, true, "tpp.tp.coords");
-	    helpPlugin.registerCommand("tp [world]", "Teleport to another player", plugin, true, "tpp.tp.world.to");
-	    helpPlugin.registerCommand("tp [world] [x] [y] [z]", "Teleport to coordinates", plugin, true, "tpp.tp.world.coords");
-	    helpPlugin.registerCommand("tp here [player(s)]", "Teleports players to you", plugin, true, "tpp.tp.here");
-	    helpPlugin.registerCommand("tp to [target] [player(s)]", "Teleports players to target", plugin, true, "tpp.tp.others");
-	    helpPlugin.registerCommand("tp top", "Teleports you to the block highest above", plugin, true, "tpp.tp.jump.top");
-	    helpPlugin.registerCommand("tp up [height]", "Teleports you up on a glass block", plugin, true, "tpp.tp.jump.up");
-	    helpPlugin.registerCommand("tp above [player]", "Teleports 10 blocks above the player", plugin, true, "tpp.tp.jump.above");
-	    helpPlugin.registerCommand("tp above [player] [height]", "Teleports above the player", plugin, true, "tpp.tp.jump.above");
-	    helpPlugin.registerCommand("tp jump", "Teleports you to the block you're looking at", plugin, true, "tpp.tp.jump.jump");
-	    helpPlugin.registerCommand("tp back", "Teleports you back to previous locations", plugin, true, "tpp.tp.history.back");
-	    helpPlugin.registerCommand("tp origin", "Go back to where you were before all tps", plugin, true, "tpp.tp.history.origin");
-	    helpPlugin.registerCommand("tp clear", "Clear your entire tp history", plugin, true, "tpp.tp.history.clear");
-	    helpPlugin.registerCommand("tp feather", "Get a feather to tp yourself around", plugin, true, "tpp.mod.feather");
-	    helpPlugin.registerCommand("tp bone", "Get a bone to tp others around", plugin, true, "tpp.mod.bone");
+	    helpPlugin.registerCommand("tp [player]", "Teleport to another player", plugin, true, plugin.pm.to);
+	    helpPlugin.registerCommand("tp [x] [y] [z]", "Teleport to coordinates", plugin, true, plugin.pm.coords);
+	    helpPlugin.registerCommand("tp [world]", "Teleport to another player", plugin, true, plugin.pm.worldTo);
+	    helpPlugin.registerCommand("tp [world] [x] [y] [z]", "Teleport to coordinates", plugin, true, plugin.pm.worldCoords);
+	    helpPlugin.registerCommand("tp here [player(s)|*]", "Teleports players to you", plugin, true, plugin.pm.here);
+	    helpPlugin.registerCommand("tp to [target] [player(s)|*]", "Teleports players to target", plugin, true, plugin.pm.others);
+	    helpPlugin.registerCommand("tp top", "Teleports you to the block highest above", plugin, true, plugin.pm.top);
+	    helpPlugin.registerCommand("tp up [height]", "Teleports you up on a glass block", plugin, true, plugin.pm.up);
+	    helpPlugin.registerCommand("tp above [player]", "Teleports 10 blocks above the player", plugin, true, plugin.pm.above);
+	    helpPlugin.registerCommand("tp above [player] [height]", "Teleports above the player", plugin, true, plugin.pm.above);
+	    helpPlugin.registerCommand("tp jump", "Teleports you to the block you're looking at", plugin, true, plugin.pm.jump);
+	    helpPlugin.registerCommand("tp back", "Teleports you back to previous locations", plugin, true, plugin.pm.back);
+	    helpPlugin.registerCommand("tp origin", "Go back to where you were before all tps", plugin, true, plugin.pm.origin);
+	    helpPlugin.registerCommand("tp clear", "Clear your entire tp history", plugin, true, plugin.pm.clear);
+	    helpPlugin.registerCommand("tp feather", "Get a feather to tp yourself around", plugin, true, plugin.pm.feather);
+	    helpPlugin.registerCommand("tp bone", "Get a bone to tp others around", plugin, true, plugin.pm.bone);
 	    
 	    TelePlusPlus.log.info("[" + plugin.getDescription().getName() + "] 'Help' support enabled");
 	}
@@ -68,7 +68,7 @@ public class CommandManager
     {
 	if (split.length > 0)
 	{
-	    if (split.length == 3 && Helper.isNumber(split[0]) && Helper.isNumber(split[1]) && Helper.isNumber(split[2]) && plugin.pm.hasPermission(player, "tpp.tp.coords"))
+	    if (split.length == 3 && Helper.isNumber(split[0]) && Helper.isNumber(split[1]) && Helper.isNumber(split[2]) && plugin.pm.hasPermission(player, plugin.pm.coords))
 	    {
 		World currentWorld = player.getWorld();
 		Location loc = new Location(currentWorld, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]), player.getLocation().getYaw(), player.getLocation().getPitch());
@@ -91,7 +91,7 @@ public class CommandManager
 		    notifyTp(player, msg);
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("here") && plugin.pm.hasPermission(player, "tpp.tp.here"))
+	    else if (split[0].equalsIgnoreCase("here") && plugin.pm.hasPermission(player, plugin.pm.here))
 	    {
 		if (split.length >= 2)
 		{
@@ -145,7 +145,7 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("to") && plugin.pm.hasPermission(player, "tpp.tp.others"))
+	    else if (split[0].equalsIgnoreCase("to") && plugin.pm.hasPermission(player, plugin.pm.others))
 	    {
 		if (split.length > 2)
 		{
@@ -211,7 +211,7 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("top") && plugin.pm.hasPermission(player, "tpp.tp.jump.top"))
+	    else if (split[0].equalsIgnoreCase("top") && plugin.pm.hasPermission(player, plugin.pm.top))
 	    {
 		if (split.length == 1)
 		{
@@ -227,18 +227,18 @@ public class CommandManager
 		    
 		    String msg = player.getName() + " moved to the top [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
 		    
-		    if (plugin.sm.logJumpTop)
+		    if (plugin.sm.logTop)
 		    {
 			logTp(player, msg);
 		    }
-		    if (plugin.sm.notifyJumpTop)
+		    if (plugin.sm.notifyTop)
 		    {
 			notifyTp(player, msg);
 		    }
 		    return true;
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("up") && plugin.pm.hasPermission(player, "tpp.tp.jump.up"))
+	    else if (split[0].equalsIgnoreCase("up") && plugin.pm.hasPermission(player, plugin.pm.up))
 	    {
 		if (split.length == 2 && Helper.isInteger(split[1]))
 		{
@@ -264,22 +264,22 @@ public class CommandManager
 		    
 		    String msg = player.getName() + " moved up " + glassHeight + " blocks [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
 		    
-		    if (plugin.sm.logJumpUp)
+		    if (plugin.sm.logUp)
 		    {
 			logTp(player, msg);
 		    }
-		    if (plugin.sm.notifyJumpUp)
+		    if (plugin.sm.notifyUp)
 		    {
 			notifyTp(player, msg);
 		    }
 		    return true;
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("above") && plugin.pm.hasPermission(player, "tpp.tp.jump.above"))
+	    else if (split[0].equalsIgnoreCase("above") && plugin.pm.hasPermission(player, plugin.pm.above))
 	    {
 		if (split.length >= 2)
 		{
-		    int height = 10;
+		    int height = 5;
 		    
 		    if (split.length == 3 && (Helper.isInteger(split[2])))
 		    {
@@ -290,6 +290,13 @@ public class CommandManager
 		    if (targets.size() == 1)
 		    {
 			Player target = targets.get(0);
+			
+			if (!canTP(player, target))
+			{
+			    player.sendMessage(ChatColor.RED + "No rights to teleport above " + target.getName());
+			    return true;
+			}
+			
 			Location targetLoc = target.getLocation();
 			int glassHeight = targetLoc.getBlockY() + height;
 			
@@ -312,11 +319,11 @@ public class CommandManager
 			
 			String msg = player.getName() + " teleported above " + target.getName() + " [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
 			
-			if (plugin.sm.logJumpAbove)
+			if (plugin.sm.logAbove)
 			{
 			    logTp(player, msg);
 			}
-			if (plugin.sm.notifyJumpAbove)
+			if (plugin.sm.notifyAbove)
 			{
 			    notifyTp(player, msg);
 			}
@@ -328,7 +335,7 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("jump") && plugin.pm.hasPermission(player, "tpp.tp.jump.jump"))
+	    else if (split[0].equalsIgnoreCase("jump") && plugin.pm.hasPermission(player, plugin.pm.jump))
 	    {
 		if (split.length == 1)
 		{
@@ -356,11 +363,11 @@ public class CommandManager
 			
 			String msg = player.getName() + " jumped to " + "[" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
 			
-			if (plugin.sm.logJumpJump)
+			if (plugin.sm.logJump)
 			{
 			    logTp(player, msg);
 			}
-			if (plugin.sm.notifyJumpJump)
+			if (plugin.sm.notifyJump)
 			{
 			    notifyTp(player, msg);
 			}
@@ -368,7 +375,7 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("back") && plugin.pm.hasPermission(player, "tpp.tp.history.back"))
+	    else if (split[0].equalsIgnoreCase("back") && plugin.pm.hasPermission(player, plugin.pm.back))
 	    {
 		if (split.length == 1)
 		{
@@ -383,11 +390,11 @@ public class CommandManager
 			
 			String msg = player.getName() + " went back to " + "[" + printWorld(location.getWorld().getName()) + location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ() + "]";
 			
-			if (plugin.sm.logTpHistoryBack)
+			if (plugin.sm.logBack)
 			{
 			    logTp(player, msg);
 			}
-			if (plugin.sm.notifyTpHistoryBack)
+			if (plugin.sm.notifyBack)
 			{
 			    notifyTp(player, msg);
 			}
@@ -395,7 +402,7 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("clear") && plugin.pm.hasPermission(player, "tpp.tp.history.clear"))
+	    else if (split[0].equalsIgnoreCase("clear") && plugin.pm.hasPermission(player, plugin.pm.clear))
 	    {
 		if (split.length == 1)
 		{
@@ -410,7 +417,7 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("origin") && plugin.pm.hasPermission(player, "tpp.tp.history.origin"))
+	    else if (split[0].equalsIgnoreCase("origin") && plugin.pm.hasPermission(player, plugin.pm.origin))
 	    {
 		if (split.length == 1)
 		{
@@ -425,11 +432,11 @@ public class CommandManager
 			
 			String msg = player.getName() + " returned to his origin location " + "[" + printWorld(location.getWorld().getName()) + location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ() + "]";
 			
-			if (plugin.sm.logTpHistoryOrigin)
+			if (plugin.sm.logOrigin)
 			{
 			    logTp(player, msg);
 			}
-			if (plugin.sm.notifyTpHistoryOrigin)
+			if (plugin.sm.notifyOrigin)
 			{
 			    notifyTp(player, msg);
 			}
@@ -437,7 +444,7 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	    else if (split.length == 4 && Helper.isNumber(split[1]) && Helper.isNumber(split[2]) && Helper.isNumber(split[3]) && plugin.pm.hasPermission(player, "tpp.tp.world.coords"))
+	    else if (split.length == 4 && Helper.isNumber(split[1]) && Helper.isNumber(split[2]) && Helper.isNumber(split[3]) && plugin.pm.hasPermission(player, plugin.pm.worldCoords))
 	    {
 		World world = plugin.getServer().getWorld(split[0]);
 		
@@ -470,7 +477,7 @@ public class CommandManager
 		}
 		return true;
 	    }
-	    else if (split[0].equalsIgnoreCase("feather") && plugin.pm.hasPermission(player, "tpp.mod.feather"))
+	    else if (split[0].equalsIgnoreCase("feather") && plugin.pm.hasPermission(player, plugin.pm.feather))
 	    {
 		if (split.length == 1)
 		{
@@ -479,7 +486,7 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	    else if (split[0].equalsIgnoreCase("bone") && plugin.pm.hasPermission(player, "tpp.mod.bone"))
+	    else if (split[0].equalsIgnoreCase("bone") && plugin.pm.hasPermission(player, plugin.pm.bone))
 	    {
 		if (split.length == 1)
 		{
@@ -488,7 +495,7 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	    else if (plugin.pm.hasPermission(player, "tpp.tp.to"))
+	    else if (plugin.pm.hasPermission(player, plugin.pm.to))
 	    {
 		if (split.length == 1)
 		{
@@ -528,11 +535,11 @@ public class CommandManager
 		    {
 			World world = plugin.getServer().getWorld(split[0]);
 			
-			if (world == null && plugin.pm.hasPermission(player, "tpp.tp.world.to"))
+			if (world == null && plugin.pm.hasPermission(player, plugin.pm.worldTo))
 			{
 			    player.sendMessage(ChatColor.RED + "Not a valid world or player.");
 			}
-			else if (plugin.pm.hasPermission(player, "tpp.tp.world.to"))
+			else if (plugin.pm.hasPermission(player, plugin.pm.worldTo))
 			{
 			    Location loc = new Location(world, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
 			    Teleporter tp = new Teleporter(loc);
@@ -564,73 +571,73 @@ public class CommandManager
 	    }
 	}
 	
-	if (plugin.pm.hasPermission(player, "tpp.tp.menu"))
+	if (plugin.pm.hasPermission(player, plugin.pm.menu))
 	{
 	    ChatBlock.sendBlank(player);
 	    ChatBlock.saySingle(player, ChatColor.LIGHT_PURPLE + plugin.name + " " + plugin.getDescription().getVersion() + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------");
 	    ChatBlock.sendBlank(player);
 	    
-	    if (plugin.pm.hasPermission(player, "tpp.tp.to"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.to))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [player]" + ChatColor.DARK_PURPLE + " - Teleport to another player");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.coords"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.coords))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [x] [y] [z]" + ChatColor.DARK_PURPLE + " - Teleport to coordinates");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.world.to"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.worldTo))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [world]" + ChatColor.DARK_PURPLE + " - Teleport to another world");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.world.coords"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.worldCoords))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [world] [x] [y] [z]" + ChatColor.DARK_PURPLE + " - Teleport to world coordinates");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.here"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.here))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp here [player(s)]" + ChatColor.DARK_PURPLE + " - Teleports players to you");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp here [player(s)|*]" + ChatColor.DARK_PURPLE + " - Teleports players to you");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.others"))
+	    if (plugin.pm.hasPermission(player,plugin.pm.others))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp to [target] [player(s)]" + ChatColor.DARK_PURPLE + " - Teleports players to target");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp to [target] [player(s)|*]" + ChatColor.DARK_PURPLE + " - Teleports players to target");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.jumpt.top"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.top))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp top" + ChatColor.DARK_PURPLE + " - Teleports you to the block highest above");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.jump.up"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.up))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp up [height]" + ChatColor.DARK_PURPLE + " - Teleports you up on a glass block");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.jump.above"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.above))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp above [player]" + ChatColor.DARK_PURPLE + " - Teleports 10 blocks above the player ");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.jump.above"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.above))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp above [player] [height]" + ChatColor.DARK_PURPLE + " - Teleports above the player ");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.jump.jump"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.jump))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp jump" + ChatColor.DARK_PURPLE + " - Teleports you to the block you're looking at");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.history.back"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.back))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp back" + ChatColor.DARK_PURPLE + " - Teleports you back to previous locations");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.history.origin"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.origin))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp origin" + ChatColor.DARK_PURPLE + " - Go back to where you were before all tps");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.tp.history.clear"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.clear))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp clear" + ChatColor.DARK_PURPLE + " - Clear your entire tp history");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.mod.feather"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.feather))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp feather" + ChatColor.DARK_PURPLE + " - Get a feather to tp yourself around");
 	    }
-	    if (plugin.pm.hasPermission(player, "tpp.mod.bone"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.bone))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp bone" + ChatColor.DARK_PURPLE + " - Get a bone to tp others around");
 	    }
@@ -641,11 +648,11 @@ public class CommandManager
     
     public void notifyTp(Player tper, String msg)
     {
-	if (!plugin.pm.hasPermission(tper, "tpp.admin.bypass.notify"))
+	if (!plugin.pm.hasPermission(tper, plugin.pm.bypassNotify))
 	{
 	    for (Player player : plugin.getServer().getOnlinePlayers())
 	    {
-		if (plugin.pm.hasPermission(player, "tpp.mod.notify"))
+		if (plugin.pm.hasPermission(player, plugin.pm.notify))
 		{
 		    if (tper.getName().equals(player.getName()))
 		    {
@@ -659,7 +666,7 @@ public class CommandManager
     
     public void logTp(Player tper, String msg)
     {
-	if (!plugin.pm.hasPermission(tper, "tpp.admin.bypass.log"))
+	if (!plugin.pm.hasPermission(tper, plugin.pm.bypassLog))
 	{
 	    TelePlusPlus.log.info(plugin.name + ": " + msg);
 	}
@@ -677,12 +684,12 @@ public class CommandManager
     
     private boolean canTP(Player player, Player target)
     {
-	if (plugin.pm.hasPermission(player, "tpp.admin.override.notp"))
+	if (plugin.pm.hasPermission(player, plugin.pm.bypassNoTp))
 	{
 	    return true;
 	}
 	
-	if (plugin.pm.hasPermission(target, "tpp.mod.notp"))
+	if (plugin.pm.hasPermission(target, plugin.pm.noTp))
 	{
 	    return false;
 	}

@@ -59,7 +59,7 @@ public class TPPlayerListener extends PlayerListener
 	Player player = event.getPlayer();
 	ItemStack item = player.getItemInHand();
 	
-	if (item.getType().equals(Material.FEATHER) && plugin.pm.hasPermission(player, "tpp.mod.feather"))
+	if (item.getType().equals(Material.FEATHER) && plugin.pm.hasPermission(player, plugin.pm.feather))
 	{
 	    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughItems());
 	    Block block = aiming.getTargetBlock();
@@ -99,7 +99,7 @@ public class TPPlayerListener extends PlayerListener
 	    }
 	}
 	
-	if (item.getType().equals(Material.BONE) && plugin.pm.hasPermission(player, "tpp.mod.bone"))
+	if (item.getType().equals(Material.BONE) && plugin.pm.hasPermission(player, plugin.pm.bone))
 	{
 	    HashSet<Entity> entities = plugin.bm.getBonedEntities(player);
 	    
