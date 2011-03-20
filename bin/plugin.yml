@@ -1,5 +1,5 @@
 name: TelePlusPlus
-version: 1.1
+version: 1.2
 main: net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus
 commands:
   tp:

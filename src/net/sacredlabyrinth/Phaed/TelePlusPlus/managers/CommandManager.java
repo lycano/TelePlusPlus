@@ -5,10 +5,9 @@ import net.sacredlabyrinth.Phaed.TelePlusPlus.Helper;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.TargetBlock;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.TeleHistory;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus;
-import net.sacredlabyrinth.Phaed.TelePlusPlus.Teleporter;
 import me.taylorkelly.help.Help;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
 public class CommandManager
@@ -43,18 +43,18 @@ public class CommandManager
 	
 	if (helpPlugin != null)
 	{
-	    helpPlugin.registerCommand("tp [player]", "Teleport to another player", plugin, true, plugin.pm.to);
+	    helpPlugin.registerCommand("tp [player]", "Teleport to another player", plugin, true, plugin.pm.player);
+	    helpPlugin.registerCommand("tp [player(s)] to [player]", "Teleport players to player", plugin, true, plugin.pm.othersPlayer);
+	    helpPlugin.registerCommand("tp [player(s)] to [x] [y] [z]", "Teleport players to coords", plugin, true, plugin.pm.othersCoords);
 	    helpPlugin.registerCommand("tp [x] [y] [z]", "Teleport to coordinates", plugin, true, plugin.pm.coords);
-	    helpPlugin.registerCommand("tp [world]", "Teleport to another player", plugin, true, plugin.pm.worldTo);
-	    helpPlugin.registerCommand("tp [world] [x] [y] [z]", "Teleport to coordinates", plugin, true, plugin.pm.worldCoords);
-	    helpPlugin.registerCommand("tp here [player(s)|*]", "Teleports players to you", plugin, true, plugin.pm.here);
-	    helpPlugin.registerCommand("tp to [target] [player(s)|*]", "Teleports players to target", plugin, true, plugin.pm.others);
-	    helpPlugin.registerCommand("tp top", "Teleports you to the block highest above", plugin, true, plugin.pm.top);
-	    helpPlugin.registerCommand("tp up [height]", "Teleports you up on a glass block", plugin, true, plugin.pm.up);
-	    helpPlugin.registerCommand("tp above [player]", "Teleports 10 blocks above the player", plugin, true, plugin.pm.above);
-	    helpPlugin.registerCommand("tp above [player] [height]", "Teleports above the player", plugin, true, plugin.pm.above);
-	    helpPlugin.registerCommand("tp jump", "Teleports you to the block you're looking at", plugin, true, plugin.pm.jump);
-	    helpPlugin.registerCommand("tp back", "Teleports you back to previous locations", plugin, true, plugin.pm.back);
+	    helpPlugin.registerCommand("tp [world] <x> <y> <z>", "Teleport to world", plugin, true, plugin.pm.world);
+	    helpPlugin.registerCommand("tp here [player(s)]", "Teleport players to you", plugin, true, plugin.pm.here);
+	    helpPlugin.registerCommand("tp mass", "Teleport all players to you", plugin, true, plugin.pm.mass);
+	    helpPlugin.registerCommand("tp top", "Teleport to the block highest above you", plugin, true, plugin.pm.top);
+	    helpPlugin.registerCommand("tp up [height]", "Teleport up on a glass block", plugin, true, plugin.pm.up);
+	    helpPlugin.registerCommand("tp above [player] <height>", "Teleport above a player", plugin, true, plugin.pm.above);
+	    helpPlugin.registerCommand("tp jump", "Teleport to the block you're looking at", plugin, true, plugin.pm.jump);
+	    helpPlugin.registerCommand("tp back", "Teleport back to your previous locations", plugin, true, plugin.pm.back);
 	    helpPlugin.registerCommand("tp origin", "Go back to where you were before all tps", plugin, true, plugin.pm.origin);
 	    helpPlugin.registerCommand("tp clear", "Clear your entire tp history", plugin, true, plugin.pm.clear);
 	    helpPlugin.registerCommand("tp feather", "Get a feather to tp yourself around", plugin, true, plugin.pm.feather);
@@ -72,9 +72,8 @@ public class CommandManager
 	    {
 		World currentWorld = player.getWorld();
 		Location loc = new Location(currentWorld, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]), player.getLocation().getYaw(), player.getLocation().getPitch());
-		Teleporter tp = new Teleporter(loc);
-		tp.addTeleportee(player);
-		if (!tp.teleport())
+		
+		if (!plugin.tm.teleport(player, loc))
 		{
 		    player.sendMessage(ChatColor.RED + "No free space available for teleport");
 		    return true;
@@ -90,123 +89,101 @@ public class CommandManager
 		{
 		    notifyTp(player, msg);
 		}
+		if (plugin.sm.showNotifications)
+		{
+		    player.sendMessage(ChatColor.DARK_PURPLE + "Teleported");
+		}
+		return true;
+	    }
+	    else if (split[0].equalsIgnoreCase("mass") && plugin.pm.hasPermission(player, plugin.pm.mass))
+	    {
+		if (split.length == 1)
+		{
+		    ArrayList<Entity> entities = new ArrayList<Entity>();
+		    
+		    Player[] players = plugin.getServer().getOnlinePlayers();
+		    
+		    for (Player teleportee : players)
+		    {
+			if (!canTP(player, teleportee))
+			{
+			    player.sendMessage(ChatColor.RED + "No rights to summon " + teleportee.getName());
+			    continue;
+			}
+			
+			entities.add(teleportee);
+		    }
+		    
+		    if (!plugin.tm.teleport(entities, player))
+		    {
+			player.sendMessage(ChatColor.RED + "No free space available for teleport");
+			return true;
+		    }
+		    
+		    String msg = player.getName() + " mass teleported all players to [" + printWorld(player.getWorld().getName()) + player.getLocation().getBlockX() + " " + player.getLocation().getBlockY() + " " + player.getLocation().getBlockZ() + "]";
+		    
+		    if (plugin.sm.logMass)
+		    {
+			logTp(player, msg);
+		    }
+		    if (plugin.sm.notifyMass)
+		    {
+			notifyTp(player, msg);
+		    }
+		    if (plugin.sm.showNotifications)
+		    {
+			player.sendMessage(ChatColor.DARK_PURPLE + "Mass teleported all players to your location");
+		    }
+		    return true;
+		}
 	    }
 	    else if (split[0].equalsIgnoreCase("here") && plugin.pm.hasPermission(player, plugin.pm.here))
 	    {
 		if (split.length >= 2)
 		{
 		    Location loc = new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-		    Teleporter tp = new Teleporter(loc);
 		    
-		    if ((split.length == 2) && (split[1].equalsIgnoreCase("*")))
+		    ArrayList<Entity> entities = new ArrayList<Entity>();
+		    
+		    for (int i = 1; i < split.length; i++)
 		    {
-			tp.addAll(plugin.getServer().getOnlinePlayers());
-		    }
-		    else
-		    {
-			for (int i = 1; i < split.length; i++)
+			Player teleportee = Helper.matchUniquePlayer(plugin, split[i]);
+			
+			if (teleportee != null)
 			{
-			    List<Player> targets = plugin.getServer().matchPlayer(split[i]);
+			    if (!canTP(player, teleportee))
+			    {
+				player.sendMessage(ChatColor.RED + "No rights to summon " + teleportee.getName());
+				continue;
+			    }
 			    
-			    if (targets.size() == 1)
-			    {
-				Player teleportee = (Player) targets.get(0);
-				
-				if (!canTP(player, teleportee))
-				{
-				    player.sendMessage(ChatColor.RED + "No rights to summon " + teleportee.getName());
-				    continue;
-				}
-				
-				tp.addTeleportee(teleportee);
-				
-				String msg = player.getName() + " summoned " + teleportee.getName() + " [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-				
-				if (plugin.sm.logHere)
-				{
-				    logTp(player, msg);
-				}
-				if (plugin.sm.notifyHere)
-				{
-				    notifyTp(player, msg);
-				}
-			    }
-			    else
-			    {
-				player.sendMessage(ChatColor.RED + split[i] + " did not match a player");
-			    }
+			    entities.add(teleportee);
+			}
+			else
+			{
+			    player.sendMessage(ChatColor.RED + split[i] + " did not match a player");
 			}
 		    }
-		    if (!tp.teleport())
+		    
+		    if (!plugin.tm.teleport(entities, player))
 		    {
 			player.sendMessage(ChatColor.RED + "No free space available for teleport");
 			return true;
 		    }
-		    return true;
-		}
-	    }
-	    else if (split[0].equalsIgnoreCase("to") && plugin.pm.hasPermission(player, plugin.pm.others))
-	    {
-		if (split.length > 2)
-		{
-		    String teleportees = "";
-		    List<Player> targets = plugin.getServer().matchPlayer(split[1]);
 		    
-		    if (targets.size() == 1)
+		    String msg = player.getName() + " summoned " + Helper.entityArrayString(entities) + " to [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+		    
+		    if (plugin.sm.logHere)
 		    {
-			Player target = (Player) targets.get(0);
-			Location loc = new Location(target.getWorld(), target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ(), target.getLocation().getYaw(), target.getLocation().getPitch());
-			Teleporter tp = new Teleporter(loc);
-			
-			if ((split.length == 3) && (split[2].equalsIgnoreCase("*")))
-			{
-			    tp.addAll(plugin.getServer().getOnlinePlayers());
-			}
-			else
-			{
-			    for (int i = 2; i < split.length; i++)
-			    {
-				targets = plugin.getServer().matchPlayer(split[i]);
-				
-				if (targets.size() == 1)
-				{
-				    Player teleportee = (Player) targets.get(0);
-				    
-				    if (!canTP(player, teleportee))
-				    {
-					player.sendMessage(ChatColor.RED + "No rights to teleport to " + teleportee.getName());
-					continue;
-				    }
-				    
-				    tp.addTeleportee(teleportee);
-				    teleportees += ", " + teleportee.getName();
-				}
-				else
-				{
-				    player.sendMessage(ChatColor.RED + split[i] + " did not match a player");
-				}
-			    }
-			}
-			if (!tp.teleport())
-			{
-			    player.sendMessage(ChatColor.RED + "No free space available for teleport");
-			    return true;
-			}
-			
-			String msg = player.getName() + " teleported " + teleportees.substring(1) + " to " + target.getName() + " [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-			
-			if (plugin.sm.logOthers)
-			{
-			    logTp(player, msg);
-			}
-			if (plugin.sm.notifyOthers)
-			{
-			    notifyTp(player, msg);
-			}
+			logTp(player, msg);
 		    }
-		    else
+		    if (plugin.sm.notifyHere)
 		    {
-			player.sendMessage(ChatColor.RED + split[1] + " did not match a player, cancelling teleport");
+			notifyTp(player, msg);
+		    }
+		    if (plugin.sm.showNotifications)
+		    {
+			player.sendMessage(ChatColor.DARK_PURPLE + "Summoned " + Helper.entityArrayString(entities));
 		    }
 		    return true;
 		}
@@ -217,9 +194,8 @@ public class CommandManager
 		{
 		    int y = player.getWorld().getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ());
 		    Location loc = new Location(player.getWorld(), player.getLocation().getX(), y, player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-		    Teleporter tp = new Teleporter(loc);
-		    tp.addTeleportee(player);
-		    if (!tp.teleport())
+		    
+		    if (!plugin.tm.teleport(player, loc))
 		    {
 			player.sendMessage(ChatColor.RED + "No free space available for teleport");
 			return true;
@@ -234,6 +210,10 @@ public class CommandManager
 		    if (plugin.sm.notifyTop)
 		    {
 			notifyTp(player, msg);
+		    }
+		    if (plugin.sm.showNotifications)
+		    {
+			player.sendMessage(ChatColor.DARK_PURPLE + "Teleported to top");
 		    }
 		    return true;
 		}
@@ -254,9 +234,8 @@ public class CommandManager
 		    }
 		    
 		    Location loc = new Location(player.getWorld(), glassloc.getX(), glassHeight + 1, glassloc.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-		    Teleporter tp = new Teleporter(loc);
-		    tp.addTeleportee(player);
-		    if (!tp.teleport())
+		    
+		    if (!plugin.tm.teleport(player, loc))
 		    {
 			player.sendMessage(ChatColor.RED + "No free space available for teleport");
 			return true;
@@ -272,6 +251,10 @@ public class CommandManager
 		    {
 			notifyTp(player, msg);
 		    }
+		    if (plugin.sm.showNotifications)
+		    {
+			player.sendMessage(ChatColor.DARK_PURPLE + "Teleported up");
+		    }
 		    return true;
 		}
 	    }
@@ -285,12 +268,11 @@ public class CommandManager
 		    {
 			height = Integer.parseInt(split[2]);
 		    }
-		    List<Player> targets = plugin.getServer().matchPlayer(split[1]);
 		    
-		    if (targets.size() == 1)
+		    Player target = Helper.matchUniquePlayer(plugin, split[1]);
+		    
+		    if (target != null)
 		    {
-			Player target = targets.get(0);
-			
 			if (!canTP(player, target))
 			{
 			    player.sendMessage(ChatColor.RED + "No rights to teleport above " + target.getName());
@@ -309,9 +291,8 @@ public class CommandManager
 			}
 			
 			Location loc = new Location(player.getWorld(), targetLoc.getX(), glassHeight + 1, targetLoc.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-			Teleporter tp = new Teleporter(loc);
-			tp.addTeleportee(player);
-			if (!tp.teleport())
+			
+			if (!plugin.tm.teleport(player, loc))
 			{
 			    player.sendMessage(ChatColor.RED + "No free space available for teleport");
 			    return true;
@@ -327,6 +308,10 @@ public class CommandManager
 			{
 			    notifyTp(player, msg);
 			}
+			if (plugin.sm.showNotifications)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "Teleported above " + target.getName());
+			}
 		    }
 		    else
 		    {
@@ -339,7 +324,7 @@ public class CommandManager
 	    {
 		if (split.length == 1)
 		{
-		    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughItems());
+		    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughBlocks());
 		    Block block = aiming.getTargetBlock();
 		    
 		    if (block == null)
@@ -352,10 +337,10 @@ public class CommandManager
 			double y = block.getY() + 1;
 			double z = block.getZ() + 0.5D;
 			World world = block.getWorld();
+			
 			Location loc = new Location(world, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
-			Teleporter tp = new Teleporter(loc);
-			tp.addTeleportee(player);
-			if (!tp.teleport())
+			
+			if (!plugin.tm.teleport(player, loc))
 			{
 			    player.sendMessage(ChatColor.RED + "No free space available for teleport");
 			    return true;
@@ -371,6 +356,10 @@ public class CommandManager
 			{
 			    notifyTp(player, msg);
 			}
+			if (plugin.sm.showNotifications)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "Jumped");
+			}
 		    }
 		    return true;
 		}
@@ -380,6 +369,7 @@ public class CommandManager
 		if (split.length == 1)
 		{
 		    Location location = TeleHistory.popLocation(player);
+		    
 		    if (location == null)
 		    {
 			player.sendMessage(ChatColor.RED + "No locations in your teleport history");
@@ -397,6 +387,10 @@ public class CommandManager
 			if (plugin.sm.notifyBack)
 			{
 			    notifyTp(player, msg);
+			}
+			if (plugin.sm.showNotifications)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "Teleported back");
 			}
 		    }
 		    return true;
@@ -422,6 +416,7 @@ public class CommandManager
 		if (split.length == 1)
 		{
 		    Location location = TeleHistory.origin(player);
+		    
 		    if (location == null)
 		    {
 			player.sendMessage(ChatColor.RED + "No locations in your teleport history");
@@ -440,49 +435,24 @@ public class CommandManager
 			{
 			    notifyTp(player, msg);
 			}
+			if (plugin.sm.showNotifications)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "Teleported to origin");
+			}
 		    }
 		    return true;
 		}
-	    }
-	    else if (split.length == 4 && Helper.isNumber(split[1]) && Helper.isNumber(split[2]) && Helper.isNumber(split[3]) && plugin.pm.hasPermission(player, plugin.pm.worldCoords))
-	    {
-		World world = plugin.getServer().getWorld(split[0]);
-		
-		if (world == null)
-		{
-		    player.sendMessage(ChatColor.RED + "Not a valid world.");
-		}
-		else
-		{
-		    Location loc = new Location(world, Double.parseDouble(split[1]), Double.parseDouble(split[2]), Double.parseDouble(split[3]), player.getLocation().getYaw(), player.getLocation().getPitch());
-		    
-		    Teleporter tp = new Teleporter(loc);
-		    tp.addTeleportee(player);
-		    if (!tp.teleport())
-		    {
-			player.sendMessage(ChatColor.RED + "No free space available for teleport");
-			return true;
-		    }
-		    
-		    String msg = player.getName() + " teleported across worlds to " + "[" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-		    
-		    if (plugin.sm.logWorldCoords)
-		    {
-			logTp(player, msg);
-		    }
-		    if (plugin.sm.notifyWorldCoords)
-		    {
-			notifyTp(player, msg);
-		    }
-		}
-		return true;
 	    }
 	    else if (split[0].equalsIgnoreCase("feather") && plugin.pm.hasPermission(player, plugin.pm.feather))
 	    {
 		if (split.length == 1)
 		{
 		    plugin.im.PutItemInHand(player, Material.FEATHER);
-		    player.sendMessage(ChatColor.DARK_PURPLE + "You now have a feather");
+		    
+		    if (plugin.sm.showNotifications)
+		    {
+			player.sendMessage(ChatColor.DARK_PURPLE + "You now have a feather");
+		    }
 		    return true;
 		}
 	    }
@@ -491,82 +461,238 @@ public class CommandManager
 		if (split.length == 1)
 		{
 		    plugin.im.PutItemInHand(player, Material.BONE);
-		    player.sendMessage(ChatColor.DARK_PURPLE + "You now have a bone");
+		    
+		    if (plugin.sm.showNotifications)
+		    {
+			player.sendMessage(ChatColor.DARK_PURPLE + "You now have a bone");
+		    }
 		    return true;
 		}
 	    }
-	    else if (plugin.pm.hasPermission(player, plugin.pm.to))
+	    else
 	    {
 		if (split.length == 1)
 		{
-		    List<Player> targets = plugin.getServer().matchPlayer(split[0]);
+		    Player target = Helper.matchUniquePlayer(plugin, split[0]);
 		    
-		    if (targets.size() == 1)
+		    if (target != null)
 		    {
-			Player target = (Player) targets.get(0);
-			
-			if (!canTP(player, target))
+			if (plugin.pm.hasPermission(player, plugin.pm.player))
 			{
-			    player.sendMessage(ChatColor.RED + "No rights to teleport to " + target.getName());
-			    return true;
-			}
-			
-			Location loc = new Location(target.getWorld(), target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ(), target.getLocation().getYaw(), target.getLocation().getPitch());
-			Teleporter tp = new Teleporter(loc);
-			tp.addTeleportee(player);
-			if (!tp.teleport())
-			{
-			    player.sendMessage(ChatColor.RED + "No free space available for teleport");
-			    return true;
-			}
-			
-			String msg = player.getName() + " teleported to " + "[" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-			
-			if (plugin.sm.logTo)
-			{
-			    logTp(player, msg);
-			}
-			if (plugin.sm.notifyTo)
-			{
-			    notifyTp(player, msg);
-			}
-		    }
-		    else
-		    {
-			World world = plugin.getServer().getWorld(split[0]);
-			
-			if (world == null && plugin.pm.hasPermission(player, plugin.pm.worldTo))
-			{
-			    player.sendMessage(ChatColor.RED + "Not a valid world or player.");
-			}
-			else if (plugin.pm.hasPermission(player, plugin.pm.worldTo))
-			{
-			    Location loc = new Location(world, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-			    Teleporter tp = new Teleporter(loc);
-			    tp.addTeleportee(player);
-			    if (!tp.teleport())
+			    if (!canTP(player, target))
+			    {
+				player.sendMessage(ChatColor.RED + "No rights to teleport to " + target.getName());
+				return true;
+			    }
+			    
+			    Location loc = new Location(target.getWorld(), target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ(), target.getLocation().getYaw(), target.getLocation().getPitch());
+			    
+			    if (!plugin.tm.teleport(player, target))
 			    {
 				player.sendMessage(ChatColor.RED + "No free space available for teleport");
 				return true;
 			    }
 			    
-			    String msg = player.getName() + " teleported across worlds to " + "[" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+			    String msg = player.getName() + " teleported to " + target.getName() + " [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
 			    
-			    if (plugin.sm.logWorldTo)
+			    if (plugin.sm.logPlayer)
 			    {
 				logTp(player, msg);
 			    }
-			    if (plugin.sm.notifyWorldTo)
+			    if (plugin.sm.notifyPlayer)
 			    {
 				notifyTp(player, msg);
+			    }
+			    if (plugin.sm.showNotifications)
+			    {
+				player.sendMessage(ChatColor.DARK_PURPLE + "Teleported to " + target.getName());
+			    }
+			    return true;
+			}
+		    }
+		    else
+		    {
+			if (plugin.pm.hasPermission(player, plugin.pm.world))
+			{
+			    World world = plugin.getServer().getWorld(split[0]);
+			    
+			    if (world == null)
+			    {
+				player.sendMessage(ChatColor.RED + "Not a valid world or player.");
+			    }
+			    else
+			    {
+				Location loc = new Location(world, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+				
+				if (!plugin.tm.teleport(player, loc))
+				{
+				    player.sendMessage(ChatColor.RED + "No free space available for teleport");
+				    return true;
+				}
+				
+				String msg = player.getName() + " teleported to " + world.getName() + " [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+				
+				if (plugin.sm.logWorld)
+				{
+				    logTp(player, msg);
+				}
+				if (plugin.sm.notifyWorld)
+				{
+				    notifyTp(player, msg);
+				}
+				if (plugin.sm.showNotifications)
+				{
+				    player.sendMessage(ChatColor.DARK_PURPLE + "Teleported to " + world.getName());
+				}
+				return true;
+			    }
+			}
+			return true;
+		    }
+		}
+		
+		int toLocation = Helper.wordLocation(split, "to");
+
+		if (toLocation > 0)
+		{
+		    ArrayList<Entity> sources = new ArrayList<Entity>();
+		    
+		    for (int i = 0; i < toLocation; i++)
+		    {
+			Player target = Helper.matchUniquePlayer(plugin, split[i]);
+			
+			if (target != null)
+			{
+			    if (!canTP(player, target))
+			    {
+				player.sendMessage(ChatColor.RED + "No rights to teleport to " + target.getName());
+				continue;
+			    }
+			    
+			    sources.add(target);
+			}
+			else
+			{
+			    player.sendMessage(ChatColor.RED + split[i] + " did not match a player");
+			}
+		    }
+
+		    if (sources.size() > 0)
+		    {
+			int targetCount = (split.length - 1) - toLocation;
+			
+			if (targetCount == 1)
+			{
+			    if (Helper.matchUniquePlayer(plugin, split[toLocation + 1]) != null)
+			    {
+				Player target = Helper.matchUniquePlayer(plugin, split[toLocation + 1]);
+				
+				if (!plugin.tm.teleport(sources, target))
+				{
+				    player.sendMessage(ChatColor.RED + "No free space available for teleport");
+				    return true;
+				}
+				
+				String msg = player.getName() + " teleported " + Helper.entityArrayString(sources) + " to " + target.getName() + " [" + printWorld(target.getWorld().getName()) + target.getLocation().getBlockX() + " " + target.getLocation().getBlockY() + " " + target.getLocation().getBlockZ() + "]";
+				
+				if (plugin.sm.logOthersPlayer)
+				{
+				    logTp(player, msg);
+				}
+				if (plugin.sm.notifyOthersPlayer)
+				{
+				    notifyTp(player, msg);
+				}
+				if (plugin.sm.showNotifications)
+				{
+				    ChatBlock.sendMessage(player, ChatColor.DARK_PURPLE + "Teleported " + Helper.entityArrayString(sources) + " to " + target.getName());
+				}
+				return true;
+			    }
+			    else
+			    {
+				player.sendMessage(ChatColor.RED + "Target did not match any player");
+			    }
+			}
+			else if (targetCount == 3)
+			{
+			    if (Helper.isNumber(split[toLocation + 1]) && Helper.isNumber(split[toLocation + 2]) && Helper.isNumber(split[toLocation + 3]))
+			    {
+				int x = Integer.parseInt(split[toLocation + 1]);
+				int y = Integer.parseInt(split[toLocation + 2]);
+				int z = Integer.parseInt(split[toLocation + 3]);
+				
+				Location loc = new Location(player.getWorld(), x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
+				
+				String msg = player.getName() + " teleported " + Helper.entityArrayString(sources) + " to [" + printWorld(player.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+				
+				if (plugin.sm.logOthersCoords)
+				{
+				    logTp(player, msg);
+				}
+				if (plugin.sm.notifyOthersCoords)
+				{
+				    notifyTp(player, msg);
+				}
+				if (plugin.sm.showNotifications)
+				{
+				    ChatBlock.sendMessage(player, ChatColor.DARK_PURPLE + "Teleported " + Helper.entityArrayString(sources) + " to [" + x + " " + y + " " + z + "]");
+				}
+				return true;
+			    }
+			    else
+			    {
+				player.sendMessage(ChatColor.RED + "Target are not valid oordinates");
 			    }
 			}
 			else
 			{
-			    player.sendMessage(ChatColor.RED + split[0] + " did not match a player, cancelling teleport");
+			    player.sendMessage(ChatColor.RED + "Target did not match any player and are not coordinates");
 			}
 		    }
-		    return true;
+		    else
+		    {
+			player.sendMessage(ChatColor.RED + "No one to teleport");
+		    }
+		}
+		else if (split.length == 4 && Helper.isNumber(split[1]) && Helper.isNumber(split[2]) && Helper.isNumber(split[3]))
+		{
+		    World world = plugin.getServer().getWorld(split[0]);
+		    
+		    if (world == null)
+		    {
+			player.sendMessage(ChatColor.RED + "Not a valid world.");
+		    }
+		    else
+		    {
+			int x = Integer.parseInt(split[1]);
+			int y = Integer.parseInt(split[2]);
+			int z = Integer.parseInt(split[3]);
+			
+			Location loc = new Location(world, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
+			
+			if (!plugin.tm.teleport(player, loc))
+			{
+			    player.sendMessage(ChatColor.RED + "No free space available for teleport");
+			    return true;
+			}
+			
+			String msg = player.getName() + " teleported across worlds to coords [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+			
+			if (plugin.sm.logWorld)
+			{
+			    logTp(player, msg);
+			}
+			if (plugin.sm.notifyWorld)
+			{
+			    notifyTp(player, msg);
+			}
+			if (plugin.sm.showNotifications)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "Teleported to " + world.getName() + " to [" + x + " " + y + " " + z + "]");
+			}
+			return true;
+		    }
 		}
 	    }
 	}
@@ -577,53 +703,53 @@ public class CommandManager
 	    ChatBlock.saySingle(player, ChatColor.LIGHT_PURPLE + plugin.name + " " + plugin.getDescription().getVersion() + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------");
 	    ChatBlock.sendBlank(player);
 	    
-	    if (plugin.pm.hasPermission(player, plugin.pm.to))
+	    if (plugin.pm.hasPermission(player, plugin.pm.player))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [player]" + ChatColor.DARK_PURPLE + " - Teleport to another player");
+	    }
+	    if (plugin.pm.hasPermission(player, plugin.pm.othersPlayer))
+	    {
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [player(s)] to [player]" + ChatColor.DARK_PURPLE + " - Teleport players to player");
+	    }
+	    if (plugin.pm.hasPermission(player, plugin.pm.othersCoords))
+	    {
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [player(s)] to [x] [y] [z]" + ChatColor.DARK_PURPLE + " - Teleport players to coords");
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.coords))
 	    {
 		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [x] [y] [z]" + ChatColor.DARK_PURPLE + " - Teleport to coordinates");
 	    }
-	    if (plugin.pm.hasPermission(player, plugin.pm.worldTo))
+	    if (plugin.pm.hasPermission(player, plugin.pm.world))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [world]" + ChatColor.DARK_PURPLE + " - Teleport to another world");
-	    }
-	    if (plugin.pm.hasPermission(player, plugin.pm.worldCoords))
-	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [world] [x] [y] [z]" + ChatColor.DARK_PURPLE + " - Teleport to world coordinates");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [world] <x> <y> <z>" + ChatColor.DARK_PURPLE + " - Teleport to world");
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.here))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp here [player(s)|*]" + ChatColor.DARK_PURPLE + " - Teleports players to you");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp here [player(s)]" + ChatColor.DARK_PURPLE + " - Teleport players to you");
 	    }
-	    if (plugin.pm.hasPermission(player,plugin.pm.others))
+	    if (plugin.pm.hasPermission(player, plugin.pm.mass))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp to [target] [player(s)|*]" + ChatColor.DARK_PURPLE + " - Teleports players to target");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp mass" + ChatColor.DARK_PURPLE + " - Teleport all players to you");
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.top))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp top" + ChatColor.DARK_PURPLE + " - Teleports you to the block highest above");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp top" + ChatColor.DARK_PURPLE + " - Teleport to the block highest above you");
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.up))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp up [height]" + ChatColor.DARK_PURPLE + " - Teleports you up on a glass block");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp up [height]" + ChatColor.DARK_PURPLE + " - Teleport up on a glass block");
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.above))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp above [player]" + ChatColor.DARK_PURPLE + " - Teleports 10 blocks above the player ");
-	    }
-	    if (plugin.pm.hasPermission(player, plugin.pm.above))
-	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp above [player] [height]" + ChatColor.DARK_PURPLE + " - Teleports above the player ");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp above [player] <height>" + ChatColor.DARK_PURPLE + " - Teleport above a player");
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.jump))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp jump" + ChatColor.DARK_PURPLE + " - Teleports you to the block you're looking at");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp jump" + ChatColor.DARK_PURPLE + " - Teleport to the block you're looking at");
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.back))
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp back" + ChatColor.DARK_PURPLE + " - Teleports you back to previous locations");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp back" + ChatColor.DARK_PURPLE + " - Teleport back to your previous locations");
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.origin))
 	    {
@@ -658,7 +784,7 @@ public class CommandManager
 		    {
 			continue;
 		    }
-		    player.sendMessage(ChatColor.DARK_GRAY + plugin.name + ": " + msg);
+		    ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + plugin.name + ": " + msg);
 		}
 	    }
 	}

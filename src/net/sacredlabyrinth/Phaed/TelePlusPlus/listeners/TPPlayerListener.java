@@ -1,10 +1,11 @@
 package net.sacredlabyrinth.Phaed.TelePlusPlus.listeners;
 
+import net.sacredlabyrinth.Phaed.TelePlusPlus.Helper;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.TargetBlock;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus;
-import net.sacredlabyrinth.Phaed.TelePlusPlus.Teleporter;
 
 import java.util.HashSet;
+import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -61,7 +62,7 @@ public class TPPlayerListener extends PlayerListener
 	
 	if (item.getType().equals(Material.FEATHER) && plugin.pm.hasPermission(player, plugin.pm.feather))
 	{
-	    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughItems());
+	    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughBlocks());
 	    Block block = aiming.getTargetBlock();
 	    
 	    if (block == null)
@@ -75,26 +76,28 @@ public class TPPlayerListener extends PlayerListener
 		double z = block.getZ() + 0.5D;
 		World world = block.getWorld();
 		Location loc = new Location(world, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
-		Teleporter tp = new Teleporter(loc);
-		tp.addTeleportee(player);
-		if (!tp.teleport())
+		
+		if (!plugin.tm.teleport(player, loc))
 		{
 		    player.sendMessage(ChatColor.RED + "No free space available for teleport");
 		    return;
 		}
 		
-		String msg = player.getName() + " feather jumped to " + "[" + plugin.com.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+		String msg = player.getName() + " feather jumped to " + "[" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
 		
-		if (plugin.sm.logWorldTo)
+		if (plugin.sm.logWorld)
 		{
-		    plugin.com.logTp(player, msg);
+		    plugin.cm.logTp(player, msg);
 		}
-		if (plugin.sm.notifyWorldTo)
+		if (plugin.sm.notifyWorld)
 		{
-		    plugin.com.notifyTp(player, msg);
+		    plugin.cm.notifyTp(player, msg);
+		}
+		if (plugin.sm.showNotifications)
+		{
+		    player.sendMessage(ChatColor.DARK_PURPLE + "Feather jumped");
 		}
 		
-		player.sendMessage(ChatColor.DARK_PURPLE + "Feather jumped");
 		event.setCancelled(true);
 	    }
 	}
@@ -105,7 +108,7 @@ public class TPPlayerListener extends PlayerListener
 	    
 	    if (entities.size() > 0)
 	    {
-		TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughItems());
+		TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughBlocks());
 		Block block = aiming.getTargetBlock();
 		
 		if (block == null)
@@ -119,22 +122,15 @@ public class TPPlayerListener extends PlayerListener
 		    double z = block.getZ() + 0.5D;
 		    World world = block.getWorld();
 		    Location loc = new Location(world, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
-		    Teleporter tp = new Teleporter(loc);
 		    
-		    String teleportees = "";
+		    ArrayList<Entity> tps = new ArrayList<Entity>();
 		    
 		    for (Entity entity : entities)
 		    {
-			tp.addTeleportee(entity);
-			
-			if (entity instanceof Player)
-			{
-			    Player pl = (Player) entity;
-			    teleportees += ", " + pl.getName();
-			}
+			tps.add(entity);
 		    }
 		    
-		    if (!tp.teleport())
+		    if (!plugin.tm.teleport(tps, loc))
 		    {
 			player.sendMessage(ChatColor.RED + "No free space available for teleport");
 			return;
@@ -142,21 +138,21 @@ public class TPPlayerListener extends PlayerListener
 		    
 		    plugin.bm.setEntitiesDirty();
 		    
-		    if (teleportees.length() > 1)
+		    String msg = player.getName() + " bone teleported " + Helper.entityArrayString(tps) + " to [" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+		    
+		    if (plugin.sm.logWorld)
 		    {
-			String msg = player.getName() + " bone teleported " + teleportees.substring(1) + " to [" + plugin.com.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-			
-			if (plugin.sm.logWorldTo)
-			{
-			    plugin.com.logTp(player, msg);
-			}
-			if (plugin.sm.notifyWorldTo)
-			{
-			    plugin.com.notifyTp(player, msg);
-			}
+			plugin.cm.logTp(player, msg);
+		    }
+		    if (plugin.sm.notifyWorld)
+		    {
+			plugin.cm.notifyTp(player, msg);
+		    }
+		    if (plugin.sm.showNotifications)
+		    {
+			player.sendMessage(ChatColor.DARK_PURPLE + "Boned");
 		    }
 		    
-		    player.sendMessage(ChatColor.DARK_PURPLE + "Boned");
 		    event.setCancelled(true);
 		}
 	    }
@@ -167,17 +163,17 @@ public class TPPlayerListener extends PlayerListener
 	    {
 		Material mat = block.getType();
 		
-		TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughItems());
+		TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughBlocks());
 		Block target = aiming.getFaceBlock();
 		
 		if (target != null)
 		{
-		    if (plugin.im.isThroughItem(target.getTypeId()))
+		    if (plugin.im.isThroughBlock(target.getTypeId()))
 		    {
 			block.setType(Material.AIR);
 			target.setType(mat);
-			player.sendMessage(ChatColor.DARK_PURPLE + "Boned");			
-			plugin.bm.relocateBonedBlock(player, target);				
+			player.sendMessage(ChatColor.DARK_PURPLE + "Boned");
+			plugin.bm.relocateBonedBlock(player, target);
 		    }
 		    else
 		    {

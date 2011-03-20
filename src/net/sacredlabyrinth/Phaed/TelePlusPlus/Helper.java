@@ -1,9 +1,13 @@
 package net.sacredlabyrinth.Phaed.TelePlusPlus;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Monster;
 
 public class Helper
 {
@@ -107,6 +111,10 @@ public class Helper
 	return first + content.substring(1);
     }
     
+    
+    /**
+     * Match the exact player name
+     */
     public static Player matchExactPlayer(TelePlusPlus plugin, String playername)
     {
 	List<Player> players = plugin.getServer().matchPlayer(playername);
@@ -115,6 +123,21 @@ public class Helper
 	{
 	    if (player.getName().equals(playername))
 		return player;
+	}
+	
+	return null;
+    }
+    
+    /**
+     * Match a unique player
+     */
+    public static Player matchUniquePlayer(TelePlusPlus plugin, String playername)
+    {
+	List<Player> players = plugin.getServer().matchPlayer(playername);
+	
+	if(players.size() == 1)
+	{
+	    return players.get(0);
 	}
 	
 	return null;
@@ -153,5 +176,54 @@ public class Helper
     public static double distance(Location from, Location to)
     {
 	return Math.sqrt(Math.pow(from.getX() - to.getX(), 2.0D) + Math.pow(from.getY() - to.getY(), 2.0D) + Math.pow(from.getZ() - to.getZ(), 2.0D));
+    }
+    
+    /**
+     * Return a string representation of a list of Entities
+     */
+    public static String entityArrayString(ArrayList<Entity> entities)
+    {
+	String out = "";
+	
+	for (Entity entity : entities)
+	{
+	    if(entity instanceof Player)
+	    {
+		out += ", " + ((Player)entity).getName();
+	    }
+	    
+	    if(entity instanceof Animals)
+	    {
+		out += ", Animal";
+	    }
+	    
+	    if(entity instanceof Monster)
+	    {
+		out += ", Monster";
+	    }
+	}
+	
+	if(out.length() > 2)
+	{
+	    return out.substring(2);
+	}
+	
+	return out;
+    }
+    
+    /**
+     * Returns the location of a word on an array
+     */
+    public static int wordLocation(String[] array, String word)
+    {
+	for(int i = 0; i < array.length; i++)
+	{
+	    if(array[i].equals(word))
+	    {
+		return i;
+	    }
+	}
+	
+	return -1;
     }    
 }

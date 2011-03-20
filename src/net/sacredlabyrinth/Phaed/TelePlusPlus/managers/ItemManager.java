@@ -18,14 +18,14 @@ public class ItemManager
 	this.plugin = plugin;
     }
     
-    public List<Integer> getThoughItems()
+    public List<Integer> getThoughBlocks()
     {
-	return plugin.sm.throughItems;
+	return plugin.sm.throughBlocks;
     }
     
-    public boolean isThroughItem(int itemid)
+    public boolean isThroughBlock(int itemid)
     {
-	return plugin.sm.throughItems.contains(itemid);
+	return plugin.sm.throughBlocks.contains(itemid);
     }
     
     public void PutItemInHand(Player player, Material item)

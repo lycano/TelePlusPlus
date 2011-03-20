@@ -7,6 +7,7 @@ import net.sacredlabyrinth.Phaed.TelePlusPlus.listeners.TPPlayerListener;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.listeners.TPEntityListener;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.PermissionsManager;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.SettingsManager;
+import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.TeleportManager;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.CommandManager;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.GlassedManager;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.BonedManager;
@@ -26,7 +27,8 @@ public class TelePlusPlus extends JavaPlugin
     private TPBlockListener blockListener;
     public PermissionsManager pm;
     public SettingsManager sm;
-    public CommandManager com;
+    public TeleportManager tm;
+    public CommandManager cm;
     public GlassedManager gm;
     public BonedManager bm;
     public ItemManager im;
@@ -41,7 +43,8 @@ public class TelePlusPlus extends JavaPlugin
 	entityListener = new TPEntityListener(this);
 	pm = new PermissionsManager(this);
 	sm = new SettingsManager(this);
-	com = new CommandManager(this);
+	tm = new TeleportManager(this);
+	cm = new CommandManager(this);
 	gm = new GlassedManager(this);
 	im = new ItemManager(this);
 	bm = new BonedManager();
@@ -70,7 +73,7 @@ public class TelePlusPlus extends JavaPlugin
 	    {
 		if (commandName.equals("tp"))
 		{
-		    return com.processCommand((Player) sender, split);
+		    return cm.processCommand((Player) sender, split);
 		}
 	    }
 	    return false;
