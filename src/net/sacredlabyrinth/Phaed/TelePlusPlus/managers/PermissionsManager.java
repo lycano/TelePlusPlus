@@ -19,6 +19,7 @@ public class PermissionsManager
     public final String player = "tpp.tp.player";
     public final String coords = "tpp.tp.coords";
     public final String here = "tpp.tp.here";
+    public final String toggle = "tpp.tp.toggle";
     public final String back = "tpp.tp.back";
     public final String origin = "tpp.tp.origin";
     public final String clear = "tpp.tp.clear";
@@ -33,10 +34,12 @@ public class PermissionsManager
     public final String feather = "tpp.mod.feather";
     public final String bone = "tpp.mod.bone";    
     public final String noTp = "tpp.mod.notp";    
-    public final String notify = "tpp.mod.notify";    
+    public final String notify = "tpp.mod.notify";
+    public final String take = "tpp.mod.take";
     public final String bypassLog = "tpp.admin.bypass.log";    
     public final String bypassNotify = "tpp.admin.bypass.notify";    
-    public final String bypassNoTp = "tpp.admin.bypass.notp";    
+    public final String bypassNoTp = "tpp.admin.bypass.notp";
+    public final String request = "tpp.request";
     
     public PermissionsManager(TelePlusPlus plugin)
     {

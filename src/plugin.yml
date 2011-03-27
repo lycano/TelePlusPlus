@@ -1,6 +1,8 @@
 name: TelePlusPlus
-version: 1.2
+version: 1.2.2
 main: net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus
 commands:
   tp:
     description: All of the Tele++ commands
+  tpp:
+    description: All of the Tele++ commands    

@@ -226,4 +226,12 @@ public class Helper
 	
 	return -1;
     }    
+    
+    /**
+     *Returns formatted coordinates form location
+     */
+    public static String formatLocation(Location loc)
+    {
+	return "[" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+    }
 }

@@ -35,7 +35,7 @@ public class BonedManager
 	{
 	    HashSet<Integer> list = bonedEntities.get(player.getName());
 	    
-	    if(list.contains(entity.getEntityId()))
+	    if (list.contains(entity.getEntityId()))
 	    {
 		return false;
 	    }
@@ -72,14 +72,24 @@ public class BonedManager
 	}
     }
     
-    public void clearBonedBlock(Player player)
+    public boolean clearBonedBlock(Player player)
     {
-	bonedBlock.remove(player.getName());
+	if (bonedBlock.containsKey(player.getName()))
+	{
+	    bonedBlock.remove(player.getName());	    
+	    return true;
+	}	
+	return false;
     }
     
-    public void clearBonedEntities(Player player)
+    public boolean clearBonedEntities(Player player)
     {
-	bonedEntities.remove(player.getName());
+	if (bonedEntities.containsKey(player.getName()))
+	{
+	    bonedEntities.remove(player.getName());
+	    return true;
+	}
+	return false;
     }
     
     public int getEntityCount(Player player)

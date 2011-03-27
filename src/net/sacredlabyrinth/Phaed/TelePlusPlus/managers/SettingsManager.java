@@ -20,10 +20,12 @@ public class SettingsManager
     public boolean logOthersCoords;
     public boolean logAbove;
     public boolean logJump;
+    public boolean logToggle;
     public boolean logBack;
     public boolean logOrigin;
     public boolean logFeater;
     public boolean logBone;
+    public boolean logRequest;
     public boolean notifyPlayer;
     public boolean notifyCoords;
     public boolean notifyWorld;
@@ -34,16 +36,19 @@ public class SettingsManager
     public boolean notifyOthersPlayer;
     public boolean notifyOthersCoords;
     public boolean notifyAbove;
+    public boolean notifyToggle;
     public boolean notifyJump;
     public boolean notifyBack;
     public boolean notifyOrigin;
     public boolean notifyFeather;
     public boolean notifyBone;
+    public boolean notifyRequest;
     public int settingsFallBlockDistance;
     public List<Integer> throughBlocks;
     public long fallImmunitySeconds;
     public boolean fallImmunity;
     public boolean showNotifications;
+    public int purgeRequestMinutes;
     
     private TelePlusPlus plugin;
     
@@ -84,6 +89,7 @@ public class SettingsManager
 	logPlayer = config.getBoolean("log.tp.player", false);
 	logCoords = config.getBoolean("log.tp.coords", false);
 	logHere = config.getBoolean("log.tp.here", false);
+	logToggle = config.getBoolean("log.tp.toggle", false);
 	logBack = config.getBoolean("log.tp.back", false);
 	logOrigin = config.getBoolean("log.tp.origin", false);
 	logOthersPlayer = config.getBoolean("log.others.player", false);
@@ -96,10 +102,12 @@ public class SettingsManager
 	logMass = config.getBoolean("log.mod.mass", false);
 	logFeater = config.getBoolean("log.mod.feather", false);
 	logBone = config.getBoolean("log.mod.bone", false);
+	logRequest = config.getBoolean("log.request", false);
 
 	notifyPlayer = config.getBoolean("notify.tp.player", false);
 	notifyCoords = config.getBoolean("notify.tp.coords", false);
 	notifyHere = config.getBoolean("notify.tp.here", false);
+	notifyToggle = config.getBoolean("notify.tp.toggle", false);
 	notifyBack = config.getBoolean("notify.tp.back", false);
 	notifyOrigin = config.getBoolean("notify.tp.origin", false);
 	notifyOthersPlayer = config.getBoolean("notify.others.player", false);
@@ -112,11 +120,13 @@ public class SettingsManager
 	notifyMass = config.getBoolean("notify.mod.mass", false);
 	notifyFeather = config.getBoolean("notify.mod.feather", false);
 	notifyBone = config.getBoolean("notify.mod.bone", false);
+	notifyRequest = config.getBoolean("notify.request", false);
 	
 	settingsFallBlockDistance = config.getInt("glassed.fall-block-distance", 10);
 	fallImmunity = config.getBoolean("glassed.fall-immunity", false);
 	fallImmunitySeconds = config.getInt("glassed.fall-immunity-seconds", 5);
 	throughBlocks = config.getIntList("settings.through-blocks", defaultThroughBlocks);
 	showNotifications = config.getBoolean("settings.show-notifications", false);
+	purgeRequestMinutes = config.getInt("settings.purge-requests-minutes", 5);
     }
 }

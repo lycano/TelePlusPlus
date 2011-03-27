@@ -7,7 +7,9 @@ import net.sacredlabyrinth.Phaed.TelePlusPlus.listeners.TPPlayerListener;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.listeners.TPEntityListener;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.PermissionsManager;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.SettingsManager;
+import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.RequestsManager;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.TeleportManager;
+import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.ToggleManager;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.CommandManager;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.GlassedManager;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.managers.BonedManager;
@@ -27,7 +29,9 @@ public class TelePlusPlus extends JavaPlugin
     private TPBlockListener blockListener;
     public PermissionsManager pm;
     public SettingsManager sm;
+    public RequestsManager rm;
     public TeleportManager tm;
+    public ToggleManager tgm;
     public CommandManager cm;
     public GlassedManager gm;
     public BonedManager bm;
@@ -43,7 +47,9 @@ public class TelePlusPlus extends JavaPlugin
 	entityListener = new TPEntityListener(this);
 	pm = new PermissionsManager(this);
 	sm = new SettingsManager(this);
+	rm = new RequestsManager(this);
 	tm = new TeleportManager(this);
+	tgm = new ToggleManager(this);
 	cm = new CommandManager(this);
 	gm = new GlassedManager(this);
 	im = new ItemManager(this);
@@ -71,7 +77,7 @@ public class TelePlusPlus extends JavaPlugin
 	    String commandName = command.getName().toLowerCase();
 	    if (sender instanceof Player)
 	    {
-		if (commandName.equals("tp"))
+		if (commandName.equals("tp") || commandName.equals("tpp"))
 		{
 		    return cm.processCommand((Player) sender, split);
 		}
