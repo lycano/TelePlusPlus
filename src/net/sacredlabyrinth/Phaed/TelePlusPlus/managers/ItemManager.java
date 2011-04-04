@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 public class ItemManager
 {
     private TelePlusPlus plugin;
-
+    
     public ItemManager(TelePlusPlus plugin)
     {
 	this.plugin = plugin;
@@ -35,25 +36,30 @@ public class ItemManager
 	
 	if (!handitem.getType().equals(Material.AIR))
 	{
-	    ItemStack inhand = player.getItemInHand();
-	    inv.setItem(inv.firstEmpty(), inhand);
+	    if(inv.firstEmpty() < 0 || inv.firstEmpty() > 103)
+	    {
+		player.sendMessage(ChatColor.RED + "No space in your inventory");
+		return;
+	    }
+	    
+	    inv.setItem(inv.firstEmpty(), handitem);
 	}
 	
 	if (inv.contains(item))
 	{
 	    ItemStack[] stacks = inv.getContents();
 	    
-	    for (ItemStack stack : stacks)
+	    for (int i = 0; i < stacks.length; i++)
 	    {
-		if (stack.getType().equals(item))
-		{
-		    stack.setAmount(stack.getAmount() - 1);
+		if (stacks[i].getType().equals(item))
+		{		    
+		    stacks[i].setAmount(stacks[i].getAmount() - 1);
+		    inv.setContents(stacks);
 		    break;
 		}
 	    }
-	    inv.setContents(stacks);
 	}
 	
 	player.setItemInHand(new ItemStack(item, 1));
-    }    
+    }
 }

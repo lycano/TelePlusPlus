@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.TelePlusPlus.listeners;
 
+import net.sacredlabyrinth.Phaed.TelePlusPlus.ChatBlock;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.Helper;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.TargetBlock;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus;
@@ -9,12 +10,12 @@ import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.event.player.PlayerItemEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.entity.Entity;
@@ -55,137 +56,241 @@ public class TPPlayerListener extends PlayerListener
     }
     
     @Override
-    public void onPlayerItem(PlayerItemEvent event)
+    public void onPlayerInteract(PlayerInteractEvent event)
     {
 	Player player = event.getPlayer();
-	ItemStack item = player.getItemInHand();
 	
-	if (item.getType().equals(Material.FEATHER) && plugin.pm.hasPermission(player, plugin.pm.feather))
+	if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
 	{
-	    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughBlocks());
-	    Block block = aiming.getTargetBlock();
+	    ItemStack item = event.getItem();
 	    
-	    if (block == null)
+	    if (item != null)
 	    {
-		player.sendMessage(ChatColor.RED + "Not pointing to valid block");
-	    }
-	    else
-	    {
-		double x = block.getX() + 0.5D;
-		double y = block.getY() + 1;
-		double z = block.getZ() + 0.5D;
-		World world = block.getWorld();
-		Location loc = new Location(world, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
-		
-		if (!plugin.tm.teleport(player, loc))
-		{
-		    player.sendMessage(ChatColor.RED + "No free space available for teleport");
-		    return;
-		}
-		
-		String msg = player.getName() + " feather jumped to " + "[" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-		
-		if (plugin.sm.logWorld)
-		{
-		    plugin.cm.logTp(player, msg);
-		}
-		if (plugin.sm.notifyWorld)
-		{
-		    plugin.cm.notifyTp(player, msg);
-		}
-		if (plugin.sm.showNotifications)
-		{
-		    player.sendMessage(ChatColor.DARK_PURPLE + "Feather jumped");
-		}
-		
-		event.setCancelled(true);
-	    }
-	}
-	
-	if (item.getType().equals(Material.BONE) && plugin.pm.hasPermission(player, plugin.pm.bone))
-	{
-	    HashSet<Entity> entities = plugin.bm.getBonedEntities(player);
-	    
-	    if (entities.size() > 0)
-	    {
-		TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughBlocks());
+		TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
 		Block block = aiming.getTargetBlock();
 		
-		if (block == null)
+		if (block == null || block.getY() <= 1)
 		{
 		    player.sendMessage(ChatColor.RED + "Not pointing to valid block");
 		}
 		else
 		{
-		    double x = block.getX() + 0.5D;
-		    double y = block.getY() + 1;
-		    double z = block.getZ() + 0.5D;
-		    World world = block.getWorld();
-		    Location loc = new Location(world, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
-		    
-		    ArrayList<Entity> tps = new ArrayList<Entity>();
-		    
-		    for (Entity entity : entities)
+		    if (item.getType().equals(Material.getMaterial(plugin.sm.moverItem)) && plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover)
 		    {
-			tps.add(entity);
-		    }
-		    
-		    if (!plugin.tm.teleport(tps, loc))
-		    {
-			player.sendMessage(ChatColor.RED + "No free space available for teleport");
+			if (!plugin.mm.addMovedBlock(player, block))
+			{
+			    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot add block, you have tagged entities");
+			    return;
+			}
+			if (plugin.sm.sayMover)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "Block tagged");
+			}
 			return;
 		    }
 		    
-		    plugin.bm.setEntitiesDirty();
-		    
-		    String msg = player.getName() + " bone teleported " + Helper.entityArrayString(tps) + " to [" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-		    
-		    if (plugin.sm.logWorld)
+		    if (item.getType().equals(Material.getMaterial(plugin.sm.toolItem)) && plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool)
 		    {
-			plugin.cm.logTp(player, msg);
-		    }
-		    if (plugin.sm.notifyWorld)
-		    {
-			plugin.cm.notifyTp(player, msg);
-		    }
-		    if (plugin.sm.showNotifications)
-		    {
-			player.sendMessage(ChatColor.DARK_PURPLE + "Boned");
+			boolean passed = false;
+			Location from = block.getLocation();
+			
+			while ((block = aiming.getNextBlock()) != null)
+			{
+			    if (block.getY() <= 1)
+			    {
+				player.sendMessage(ChatColor.RED + "No free space available for teleport");
+				return;
+			    }
+			    
+			    if (plugin.tm.blockIsSafe(block))
+			    {
+				Location to = new Location(block.getWorld(), block.getX(), block.getY() + 1, block.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+								
+				to.setX(to.getX() + .5D);
+				to.setZ(to.getZ() + .5D);
+				
+				if (!block.getWorld().isChunkLoaded(to.getBlockX() >> 4, to.getBlockZ() >> 4))
+				{
+				    block.getWorld().loadChunk(to.getBlockX() >> 4, to.getBlockZ() >> 4);
+				}
+				
+				player.teleport(to);
+				
+				String msg = player.getName() + " passed through " + Math.round(Helper.distance(from, to)) + " blocks to " + "[" + plugin.cm.printWorld(to.getWorld().getName()) + to.getBlockX() + " " + to.getBlockY() + " " + to.getBlockZ() + "]";
+				
+				if (plugin.sm.logTool)
+				{
+				    plugin.cm.logTp(player, msg);
+				}
+				if (plugin.sm.notifyTool)
+				{
+				    plugin.cm.notifyTp(player, msg);
+				}
+				if (plugin.sm.sayTool)
+				{
+				    player.sendMessage(ChatColor.DARK_PURPLE + "Passed through " + Math.round(Helper.distance(from, to)) + " blocks");
+				}
+				
+				passed = true;
+				break;
+			    }
+			}
+			
+			if (!passed)
+			{
+			    player.sendMessage(ChatColor.RED + "No free space available for teleport");
+			}
+			
+			return;
 		    }
 		    
-		    event.setCancelled(true);
+		    if (block.getType().equals(Material.GLASS))
+		    {
+			if (plugin.gm.isGlassedBlock(player, block))
+			{
+			    Block fallblock = player.getWorld().getBlockAt(block.getX(), block.getY() - plugin.sm.settingsFallBlockDistance, block.getZ());
+			    
+			    if (!plugin.gm.addGlassed(player, fallblock))
+			    {
+				plugin.gm.removeGlassed(player);
+			    }
+			}
+		    }
+		    return;
 		}
 	    }
+	}
+	else if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+	{
+	    ItemStack item = event.getItem();
 	    
-	    Block block = plugin.bm.getBonedBlock(player);
-	    
-	    if (block != null)
+	    if (item != null)
 	    {
-		Material mat = block.getType();
-		
-		TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.im.getThoughBlocks());
-		Block target = aiming.getFaceBlock();
-		
-		if (target != null)
+		if (item.getType().equals(Material.getMaterial(plugin.sm.toolItem)) && plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool)
 		{
-		    if (plugin.im.isThroughBlock(target.getTypeId()))
+		    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+		    Block block = aiming.getTargetBlock();
+		    
+		    if (block == null || block.getY() <= 1)
 		    {
-			block.setType(Material.AIR);
-			target.setType(mat);
-			player.sendMessage(ChatColor.DARK_PURPLE + "Boned");
-			plugin.bm.relocateBonedBlock(player, target);
+			player.sendMessage(ChatColor.RED + "Not pointing to valid block");
 		    }
 		    else
 		    {
-			player.sendMessage(ChatColor.RED + "There is something in the way");
-			return;
+			Location loc = new Location(block.getWorld(), block.getX(), block.getY() + 1, block.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+			
+			if (!plugin.tm.teleport(player, loc))
+			{
+			    player.sendMessage(ChatColor.RED + "No free space available for teleport");
+			    return;
+			}
+			
+			String msg = player.getName() + " tool jumped to " + "[" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+			
+			if (plugin.sm.logTool)
+			{
+			    plugin.cm.logTp(player, msg);
+			}
+			if (plugin.sm.notifyTool)
+			{
+			    plugin.cm.notifyTp(player, msg);
+			}
+			if (plugin.sm.sayTool)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "Jumped");
+			}
+			
+			event.setCancelled(true);
 		    }
 		}
-	    }
-	    
-	    if (entities.size() == 0 && block == null)
-	    {
-		player.sendMessage(ChatColor.RED + "Nothing has been tagged");
+		
+		if (item.getType().equals(Material.getMaterial(plugin.sm.moverItem)) && plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover)
+		{
+		    HashSet<Entity> entities = plugin.mm.getMovedEntities(player);
+		    
+		    if (entities.size() > 0)
+		    {
+			TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+			Block block = aiming.getTargetBlock();
+			
+			if (block == null)
+			{
+			    player.sendMessage(ChatColor.RED + "Not pointing to valid block");
+			}
+			else
+			{
+			    Location loc = new Location(block.getWorld(), block.getX(), block.getY() + 1, block.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+			    
+			    ArrayList<Entity> tps = new ArrayList<Entity>();
+			    
+			    for (Entity entity : entities)
+			    {
+				tps.add(entity);
+			    }
+			    
+			    if (!plugin.tm.teleport(tps, loc))
+			    {
+				player.sendMessage(ChatColor.RED + "No free space available for teleport");
+				return;
+			    }
+			    
+			    plugin.mm.setEntitiesDirty();
+			    
+			    String msg = player.getName() + " moved " + Helper.entityArrayString(tps) + " to [" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+			    
+			    if (plugin.sm.logMover)
+			    {
+				plugin.cm.logTp(player, msg);
+			    }
+			    if (plugin.sm.notifyMover)
+			    {
+				plugin.cm.notifyTp(player, msg);
+			    }
+			    if (plugin.sm.sayMover)
+			    {
+				player.sendMessage(ChatColor.DARK_PURPLE + "Moved");
+			    }
+			    
+			    event.setCancelled(true);
+			}
+		    }
+		    
+		    Block block = plugin.mm.getMovedBlock(player);
+		    
+		    if (block != null)
+		    {
+			Material mat = block.getType();
+			
+			TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+			Block target = aiming.getFaceBlock();
+			
+			if (target != null)
+			{
+			    if (plugin.im.isThroughBlock(target.getTypeId()))
+			    {
+				block.setType(Material.AIR);
+				target.setType(mat);
+				
+				if (plugin.sm.sayMover)
+				{
+				    player.sendMessage(ChatColor.DARK_PURPLE + "Moved");
+				}
+				
+				plugin.mm.relocateMovedBlock(player, target);
+			    }
+			    else
+			    {
+				player.sendMessage(ChatColor.RED + "There is something in the way");
+				return;
+			    }
+			}
+		    }
+		    
+		    if (entities.size() == 0 && block == null)
+		    {
+			player.sendMessage(ChatColor.RED + "Nothing has been tagged");
+		    }
+		}
 	    }
 	}
     }

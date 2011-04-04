@@ -1,9 +1,6 @@
 package net.sacredlabyrinth.Phaed.TelePlusPlus.managers;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Collections;
 
 import net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus;
 
@@ -16,7 +13,7 @@ public class GlassedManager
 {
     private TelePlusPlus plugin;
     private HashMap<String, Vector> glassed = new HashMap<String, Vector>();
-    private Set<String> fallDamageImmune = Collections.synchronizedSet(new HashSet<String>());
+    private HashMap<String, Integer> fallDamageImmune = new HashMap<String, Integer>();
     
     public GlassedManager(TelePlusPlus plugin)
     {
@@ -51,7 +48,7 @@ public class GlassedManager
 	{
 	    if (plugin.sm.fallImmunity)
 	    {
-		startImmuneRemovalDelay(player);
+		 fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
 	    }
 	    return false;
 	}
@@ -61,7 +58,13 @@ public class GlassedManager
 	
 	if (plugin.sm.fallImmunity)
 	{
-	    fallDamageImmune.add(player.getName());
+	    if (fallDamageImmune.containsKey(player.getName()))
+	    {
+		int current = fallDamageImmune.get(player.getName());		
+		plugin.getServer().getScheduler().cancelTask(current);
+	    }
+	    
+	    fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
 	}
 	return true;
     }
@@ -71,9 +74,10 @@ public class GlassedManager
 	if (glassed.containsKey(player.getName()))
 	{
 	    removeGlassedNotImmunity(player);
+	    
 	    if (plugin.sm.fallImmunity)
 	    {
-		startImmuneRemovalDelay(player);
+		 fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
 	    }
 	}
     }
@@ -94,14 +98,14 @@ public class GlassedManager
     
     public boolean isFallDamageImmune(Player player)
     {
-	return fallDamageImmune.contains(player.getName());
+	return fallDamageImmune.containsKey(player.getName());
     }
     
-    public void startImmuneRemovalDelay(Player player)
+    public int startImmuneRemovalDelay(Player player)
     {
 	final String name = player.getName();
 	
-	plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable()
+	return plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable()
 	{
 	    public void run()
 	    {

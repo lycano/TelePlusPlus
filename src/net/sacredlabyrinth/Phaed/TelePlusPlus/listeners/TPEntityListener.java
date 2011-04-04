@@ -33,6 +33,16 @@ public class TPEntityListener extends EntityListener
 	    {
 		Player player = (Player) event.getEntity();
 		
+		if (plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool && player.getItemInHand().getType().equals(Material.getMaterial(plugin.sm.toolItem)))
+		{
+		    event.setCancelled(true);
+		}
+		
+		if (plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover && player.getItemInHand().getType().equals(Material.getMaterial(plugin.sm.moverItem)))
+		{
+		    event.setCancelled(true);
+		}
+		
 		if (plugin.gm.isFallDamageImmune(player))
 		{
 		    event.setCancelled(true);
@@ -49,38 +59,44 @@ public class TPEntityListener extends EntityListener
 		Entity entity = sub.getEntity();
 		ItemStack item = player.getItemInHand();
 		
-		if (item.getType().equals(Material.BONE) && plugin.pm.hasPermission(player, plugin.pm.bone))
+		if (item.getType().equals(Material.getMaterial(plugin.sm.moverItem)) && plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover)
 		{
 		    event.setCancelled(true);
 		    
-		    if (plugin.bm.addBonedEntity(player, entity))
+		    if (plugin.mm.addMovedEntity(player, entity))
 		    {
-			int count = plugin.bm.getEntityCount(player);
+			int count = plugin.mm.getEntityCount(player);
 			
-			if (entity instanceof Player)
+			if (plugin.sm.sayMover)
 			{
-			    player.sendMessage(ChatColor.DARK_PURPLE + "Player tagged (" + count + ")");
-			}
-			else if (entity instanceof Monster)
-			{
-			    player.sendMessage(ChatColor.DARK_PURPLE + "Mob tagged (" + count + ")");
-			}
-			else if (entity instanceof Animals)
-			{
-			    player.sendMessage(ChatColor.DARK_PURPLE + "Animal tagged (" + count + ")");
-			}
-			else if (entity instanceof Vehicle)
-			{
-			    player.sendMessage(ChatColor.DARK_PURPLE + "Vehicle tagged (" + count + ")");
-			}
-			else if (entity instanceof Vehicle)
-			{
-			    player.sendMessage(ChatColor.DARK_PURPLE + "Entity tagged (" + count + ")");
+			    if (entity instanceof Player)
+			    {
+				player.sendMessage(ChatColor.DARK_PURPLE + "Player tagged (" + count + ")");
+			    }
+			    else if (entity instanceof Monster)
+			    {
+				player.sendMessage(ChatColor.DARK_PURPLE + "Mob tagged (" + count + ")");
+			    }
+			    else if (entity instanceof Animals)
+			    {
+				player.sendMessage(ChatColor.DARK_PURPLE + "Animal tagged (" + count + ")");
+			    }
+			    else if (entity instanceof Vehicle)
+			    {
+				player.sendMessage(ChatColor.DARK_PURPLE + "Vehicle tagged (" + count + ")");
+			    }
+			    else if (entity instanceof Vehicle)
+			    {
+				player.sendMessage(ChatColor.DARK_PURPLE + "Entity tagged (" + count + ")");
+			    }
 			}
 		    }
 		    else
 		    {
-			player.sendMessage(ChatColor.RED + "Already tagged");
+			if (plugin.sm.sayMover)
+			{
+			    player.sendMessage(ChatColor.RED + "Already tagged");
+			}
 		    }
 		}
 	    }

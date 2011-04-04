@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -13,11 +14,11 @@ import net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus;
 
 public class TeleportManager
 {
-    //private TelePlusPlus plugin;
+    private TelePlusPlus plugin;
 
     public TeleportManager(TelePlusPlus plugin)
     {
-	//this.plugin = plugin;
+	this.plugin = plugin;
     }
     
     public boolean teleport(Entity entity, Player player)
@@ -57,9 +58,12 @@ public class TeleportManager
     public boolean teleport(ArrayList<Entity> entities, Location destination)
     {
 	World world = destination.getWorld();
-	double x = destination.getX();
-	double y = destination.getY();
-	double z = destination.getZ();
+	double x = destination.getBlockX();
+	double y = destination.getBlockY();
+	double z = destination.getBlockZ();
+	
+	x = x + .5D;
+	z = z + .5D;
 	
 	if (y < 1.0D)
 	{
@@ -96,7 +100,7 @@ public class TeleportManager
 		Player player = (Player) entity;
 		TeleHistory.pushLocation(player, player.getLocation());
 	    }
-	    entity.teleportTo(new Location(world, x, y, z, destination.getYaw(), destination.getPitch()));
+	    entity.teleport(new Location(world, x, y, z, destination.getYaw(), destination.getPitch()));
 	}
 	
 	return true;
@@ -106,7 +110,12 @@ public class TeleportManager
     {
 	Material mat = world.getBlockAt((int) Math.floor(x), (int) Math.floor(y - 1.0D), (int) Math.floor(z)).getType();
 	
-	return  mat == Material.AIR || mat == Material.WATER;
+	return plugin.sm.throughBlocks.contains(mat.getId());
+    }
+    
+    public boolean blockIsSafe(Block block)
+    {
+	return blockIsSafe(block.getWorld(), block.getX(), block.getY(), block.getZ());
     }
     
     public boolean blockIsSafe(World world, double x, double y, double z)
@@ -114,7 +123,7 @@ public class TeleportManager
 	Material mat1 = world.getBlockAt((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z)).getType();
 	Material mat2 = world.getBlockAt((int) Math.floor(x), (int) Math.floor(y + 1.0D), (int) Math.floor(z)).getType();
 	
-	return (mat1 == Material.AIR || mat1 == Material.WATER) && (mat2 == Material.AIR || mat2 == Material.WATER);
+	return (plugin.sm.throughBlocks.contains(mat1.getId())) && (plugin.sm.throughBlocks.contains(mat2.getId()));
     }
     
     public Location calculateSmartLocation(Player player)

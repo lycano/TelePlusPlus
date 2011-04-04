@@ -115,7 +115,7 @@ public class RequestsManager
 	
 	for (Player player : online)
 	{
-	    if (plugin.pm.hasPermission(player, "tpp.mod.respond"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.take) && !plugin.sm.disableRequest)
 	    {
 		return true;
 	    }
@@ -129,7 +129,7 @@ public class RequestsManager
 	
 	for (Player player : online)
 	{
-	    if (plugin.pm.hasPermission(player, "tpp.mod.respond"))
+	    if (plugin.pm.hasPermission(player, plugin.pm.take) && !plugin.sm.disableRequest)
 	    {
 		ChatBlock.sendMessage(player, ChatColor.DARK_PURPLE + "[tp] " + ChatColor.WHITE + "[" + req.getPlayerName() + "] " + ChatColor.YELLOW + "requests tp to " + ChatColor.WHITE + (req.getLocation() != null ? Helper.formatLocation(req.getLocation()) : "[" + req.getTargetName() + "]"));
 		ChatBlock.sendMessage(player, ChatColor.DARK_PURPLE + "[tp] " + ChatColor.YELLOW + "Reason: " + req.getReason());

@@ -5,14 +5,13 @@ import net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.nijiko.permissions.PermissionHandler;
 
-import org.anjocaido.groupmanager.GroupManager;
 import org.bukkit.plugin.Plugin;
 
 import org.bukkit.entity.Player;
+
 public class PermissionsManager
 {
     public static PermissionHandler Permissions = null;
-    public GroupManager gm;
     private TelePlusPlus plugin;
     
     public final String menu = "tpp.tp.menu";    
@@ -31,8 +30,8 @@ public class PermissionsManager
     public final String jump = "tpp.jump.jump";
     public final String above = "tpp.mod.above";
     public final String mass = "tpp.mod.mass";
-    public final String feather = "tpp.mod.feather";
-    public final String bone = "tpp.mod.bone";    
+    public final String tool = "tpp.mod.tool";
+    public final String mover = "tpp.mod.mover";    
     public final String noTp = "tpp.mod.notp";    
     public final String notify = "tpp.mod.notify";
     public final String take = "tpp.mod.take";
@@ -45,8 +44,7 @@ public class PermissionsManager
     {
 	this.plugin = plugin;
 	
-	startGroupManager();
-	startPermissions();
+	startoolmissions();
     }
     
     public boolean hasPermission(Player player, String permission)
@@ -58,7 +56,7 @@ public class PermissionsManager
 
 	if (hasPermissionPlugin())
 	{
-	    return (Permissions != null && Permissions.has(player, permission)) || (gm != null && gm.getWorldsHolder().getWorldPermissions(player).has(player, permission));
+	    return (Permissions != null && Permissions.has(player, permission));
 	}
 	else
 	{
@@ -85,27 +83,10 @@ public class PermissionsManager
     
     private boolean hasPermissionPlugin()
     {
-	return gm != null || Permissions != null;
+	return Permissions != null;
     }
     
-    public void startGroupManager()
-    {
-	if (gm == null)
-	{
-	    Plugin p = plugin.getServer().getPluginManager().getPlugin("GroupManager");
-	    
-	    if (p != null)
-	    {
-		if (!plugin.getServer().getPluginManager().isPluginEnabled(p))
-		{
-		    plugin.getServer().getPluginManager().enablePlugin(p);
-		}
-		gm = (GroupManager) p;
-	    }
-	}
-    }
-    
-    public void startPermissions()
+    public void startoolmissions()
     {
 	if (PermissionsManager.Permissions == null)
 	{
