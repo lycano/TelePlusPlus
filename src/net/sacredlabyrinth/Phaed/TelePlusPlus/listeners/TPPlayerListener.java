@@ -66,16 +66,16 @@ public class TPPlayerListener extends PlayerListener
 	    
 	    if (item != null)
 	    {
-		TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
-		Block block = aiming.getTargetBlock();
-		
-		if (block == null || block.getY() <= 1)
+		if (item.getType().equals(Material.getMaterial(plugin.sm.moverItem)) && plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover)
 		{
-		    player.sendMessage(ChatColor.RED + "Not pointing to valid block");
-		}
-		else
-		{
-		    if (item.getType().equals(Material.getMaterial(plugin.sm.moverItem)) && plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover)
+		    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+		    Block block = aiming.getTargetBlock();
+		    
+		    if (block == null || block.getY() <= 1)
+		    {
+			player.sendMessage(ChatColor.RED + "Not pointing to valid block");
+		    }
+		    else
 		    {
 			if (!plugin.mm.addMovedBlock(player, block))
 			{
@@ -88,8 +88,83 @@ public class TPPlayerListener extends PlayerListener
 			}
 			return;
 		    }
+		}
+		
+		if (item.getType().equals(Material.getMaterial(plugin.sm.toolItem)) && plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool)
+		{
+		    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+		    Block block = aiming.getTargetBlock();
 		    
-		    if (item.getType().equals(Material.getMaterial(plugin.sm.toolItem)) && plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool)
+		    if (block == null || block.getY() <= 1)
+		    {
+			player.sendMessage(ChatColor.RED + "Not pointing to valid block");
+		    }
+		    else
+		    {
+			Location loc = new Location(block.getWorld(), block.getX(), block.getY() + 1, block.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+			
+			if (!plugin.tm.teleport(player, loc))
+			{
+			    player.sendMessage(ChatColor.RED + "No free space available for teleport");
+			    return;
+			}
+			
+			String msg = player.getName() + " tool jumped to " + "[" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+			
+			if (plugin.sm.logTool)
+			{
+			    plugin.cm.logTp(player, msg);
+			}
+			if (plugin.sm.notifyTool)
+			{
+			    plugin.cm.notifyTp(player, msg);
+			}
+			if (plugin.sm.sayTool)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "Jumped");
+			}
+			
+			event.setCancelled(true);
+			return;
+		    }
+		}
+	    }
+	    
+	    Block clicked = event.getClickedBlock();
+	    
+	    if (clicked != null)
+	    {
+		if (clicked.getType().equals(Material.GLASS))
+		{
+		    if (plugin.gm.isGlassedBlock(player, clicked))
+		    {
+			Block fallblock = player.getWorld().getBlockAt(clicked.getX(), clicked.getY() - plugin.sm.settingsFallBlockDistance, clicked.getZ());
+			
+			if (!plugin.gm.addGlassed(player, fallblock))
+			{
+			    plugin.gm.removeGlassed(player);
+			}
+		    }
+		}
+	    }
+	}
+	else if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+	{
+	    ItemStack item = event.getItem();
+	    
+	    if (item != null)
+	    {
+		if (item.getType().equals(Material.getMaterial(plugin.sm.toolItem)) && plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool)
+		{
+		    
+		    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+		    Block block = aiming.getTargetBlock();
+		    
+		    if (block == null || block.getY() <= 1)
+		    {
+			player.sendMessage(ChatColor.RED + "Not pointing to valid block");
+		    }
+		    else
 		    {
 			boolean passed = false;
 			Location from = block.getLocation();
@@ -105,7 +180,7 @@ public class TPPlayerListener extends PlayerListener
 			    if (plugin.tm.blockIsSafe(block))
 			    {
 				Location to = new Location(block.getWorld(), block.getX(), block.getY() + 1, block.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-								
+				
 				to.setX(to.getX() + .5D);
 				to.setZ(to.getZ() + .5D);
 				
@@ -142,65 +217,6 @@ public class TPPlayerListener extends PlayerListener
 			}
 			
 			return;
-		    }
-		    
-		    if (block.getType().equals(Material.GLASS))
-		    {
-			if (plugin.gm.isGlassedBlock(player, block))
-			{
-			    Block fallblock = player.getWorld().getBlockAt(block.getX(), block.getY() - plugin.sm.settingsFallBlockDistance, block.getZ());
-			    
-			    if (!plugin.gm.addGlassed(player, fallblock))
-			    {
-				plugin.gm.removeGlassed(player);
-			    }
-			}
-		    }
-		    return;
-		}
-	    }
-	}
-	else if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-	{
-	    ItemStack item = event.getItem();
-	    
-	    if (item != null)
-	    {
-		if (item.getType().equals(Material.getMaterial(plugin.sm.toolItem)) && plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool)
-		{
-		    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
-		    Block block = aiming.getTargetBlock();
-		    
-		    if (block == null || block.getY() <= 1)
-		    {
-			player.sendMessage(ChatColor.RED + "Not pointing to valid block");
-		    }
-		    else
-		    {
-			Location loc = new Location(block.getWorld(), block.getX(), block.getY() + 1, block.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-			
-			if (!plugin.tm.teleport(player, loc))
-			{
-			    player.sendMessage(ChatColor.RED + "No free space available for teleport");
-			    return;
-			}
-			
-			String msg = player.getName() + " tool jumped to " + "[" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-			
-			if (plugin.sm.logTool)
-			{
-			    plugin.cm.logTp(player, msg);
-			}
-			if (plugin.sm.notifyTool)
-			{
-			    plugin.cm.notifyTp(player, msg);
-			}
-			if (plugin.sm.sayTool)
-			{
-			    player.sendMessage(ChatColor.DARK_PURPLE + "Jumped");
-			}
-			
-			event.setCancelled(true);
 		    }
 		}
 		
@@ -260,6 +276,7 @@ public class TPPlayerListener extends PlayerListener
 		    if (block != null)
 		    {
 			Material mat = block.getType();
+			byte data = block.getData();
 			
 			TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
 			Block target = aiming.getFaceBlock();
@@ -270,6 +287,7 @@ public class TPPlayerListener extends PlayerListener
 			    {
 				block.setType(Material.AIR);
 				target.setType(mat);
+				target.setData(data);
 				
 				if (plugin.sm.sayMover)
 				{

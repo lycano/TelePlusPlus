@@ -52,7 +52,7 @@ public class CommandManager
 	    helpPlugin.registerCommand("tp here [player(s)]", "Teleport players to you", plugin, true, plugin.pm.here);
 	    helpPlugin.registerCommand("tp mass", "Teleport all players to you", plugin, true, plugin.pm.mass);
 	    helpPlugin.registerCommand("tp top", "Teleport to the block highest above you", plugin, true, plugin.pm.top);
-	    helpPlugin.registerCommand("tp up [height]", "Teleport up on a glass block", plugin, true, plugin.pm.up);
+	    helpPlugin.registerCommand("tp up <height>", "Teleport up on a glass block", plugin, true, plugin.pm.up);
 	    helpPlugin.registerCommand("tp above [player] <height>", "Teleport above a player", plugin, true, plugin.pm.above);
 	    helpPlugin.registerCommand("tp jump", "Teleport to the block you're looking at", plugin, true, plugin.pm.jump);
 	    helpPlugin.registerCommand("tp toggle", "Toggle teleporting to you on/off", plugin, true, plugin.pm.toggle);
@@ -223,43 +223,54 @@ public class CommandManager
 	    }
 	    else if (split[0].equalsIgnoreCase("up") && plugin.pm.hasPermission(player, plugin.pm.up) && !plugin.sm.disableUp)
 	    {
+		Location glassloc = player.getLocation();
+		
+		int glassHeight = glassloc.getBlockY() + 10;
+		
 		if (split.length == 2 && Helper.isInteger(split[1]))
 		{
-		    Location glassloc = player.getLocation();
-		    int glassHeight = glassloc.getBlockY() + Integer.parseInt(split[1]);
-		    
-		    Block targetglass = player.getWorld().getBlockAt(glassloc.getBlockX(), glassHeight, glassloc.getBlockZ());
-		    
-		    if (!plugin.gm.addGlassed(player, targetglass))
+		    glassHeight = glassloc.getBlockY() + Integer.parseInt(split[1]);
+		}
+		
+		Block targetglass = player.getWorld().getBlockAt(glassloc.getBlockX(), glassHeight, glassloc.getBlockZ());
+		Location loc = new Location(player.getWorld(), glassloc.getX(), glassHeight + 1, glassloc.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+		
+		if (!plugin.gm.addGlassed(player, targetglass))
+		{
+		    if (plugin.pm.hasPermission(player, plugin.pm.top) && !plugin.sm.disableTop)
+		    {
+			int y = player.getWorld().getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ());
+			loc = new Location(player.getWorld(), player.getLocation().getX(), y, player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+			glassHeight = (int) Math.round(Helper.distance(glassloc, loc));
+		    }
+		    else
 		    {
 			player.sendMessage(ChatColor.RED + "No free space above you at that height");
 			return true;
 		    }
-		    
-		    Location loc = new Location(player.getWorld(), glassloc.getX(), glassHeight + 1, glassloc.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-		    
-		    if (!plugin.tm.teleport(player, loc))
-		    {
-			player.sendMessage(ChatColor.RED + "No free space available for teleport");
-			return true;
-		    }
-		    
-		    String msg = player.getName() + " moved up " + glassHeight + " blocks [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-		    
-		    if (plugin.sm.logUp)
-		    {
-			logTp(player, msg);
-		    }
-		    if (plugin.sm.notifyUp)
-		    {
-			notifyTp(player, msg);
-		    }
-		    if (plugin.sm.sayUp)
-		    {
-			player.sendMessage(ChatColor.DARK_PURPLE + "Teleported up");
-		    }
+		}
+		
+		if (!plugin.tm.teleport(player, loc))
+		{
+		    player.sendMessage(ChatColor.RED + "No free space available for teleport");
 		    return true;
 		}
+		
+		String msg = player.getName() + " moved up " + glassHeight + " blocks [" + printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+		
+		if (plugin.sm.logUp)
+		{
+		    logTp(player, msg);
+		}
+		if (plugin.sm.notifyUp)
+		{
+		    notifyTp(player, msg);
+		}
+		if (plugin.sm.sayUp)
+		{
+		    player.sendMessage(ChatColor.DARK_PURPLE + "Teleported up");
+		}
+		return true;
 	    }
 	    else if (split[0].equalsIgnoreCase("above") && plugin.pm.hasPermission(player, plugin.pm.above) && !plugin.sm.disableAbove)
 	    {
@@ -477,11 +488,12 @@ public class CommandManager
 	    {
 		if (split.length == 1)
 		{
-		    plugin.im.PutItemInHand(player, Material.getMaterial(plugin.sm.moverItem));
-		    
-		    if (plugin.sm.sayMover)
+		    if (plugin.im.PutItemInHand(player, Material.getMaterial(plugin.sm.moverItem)))
 		    {
-			player.sendMessage(ChatColor.DARK_PURPLE + "You now have a " + Helper.friendlyBlockType(Material.getMaterial(plugin.sm.moverItem).toString()).toLowerCase());
+			if (plugin.sm.sayMover)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "You now have a " + Helper.friendlyBlockType(Material.getMaterial(plugin.sm.moverItem).toString()).toLowerCase());
+			}
 		    }
 		    return true;
 		}
@@ -490,11 +502,12 @@ public class CommandManager
 	    {
 		if (split.length == 1)
 		{
-		    plugin.im.PutItemInHand(player, Material.getMaterial(plugin.sm.toolItem));
-		    
-		    if (plugin.sm.sayTool)
+		    if (plugin.im.PutItemInHand(player, Material.getMaterial(plugin.sm.toolItem)))
 		    {
-			player.sendMessage(ChatColor.DARK_PURPLE + "You now have a " + Helper.friendlyBlockType(Material.getMaterial(plugin.sm.toolItem).toString()).toLowerCase());
+			if (plugin.sm.sayTool)
+			{
+			    player.sendMessage(ChatColor.DARK_PURPLE + "You now have a " + Helper.friendlyBlockType(Material.getMaterial(plugin.sm.toolItem).toString()).toLowerCase());
+			}
 		    }
 		    return true;
 		}
@@ -985,7 +998,7 @@ public class CommandManager
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.up) && !plugin.sm.disableUp)
 	    {
-		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp up [height]" + ChatColor.DARK_PURPLE + " - Teleport up on a glass block");
+		ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp up <height>" + ChatColor.DARK_PURPLE + " - Teleport up on a glass block");
 	    }
 	    if (plugin.pm.hasPermission(player, plugin.pm.above) && !plugin.sm.disableAbove)
 	    {

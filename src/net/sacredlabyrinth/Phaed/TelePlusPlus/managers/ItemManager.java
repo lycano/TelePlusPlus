@@ -29,17 +29,17 @@ public class ItemManager
 	return plugin.sm.throughBlocks.contains(itemid);
     }
     
-    public void PutItemInHand(Player player, Material item)
+    public boolean PutItemInHand(Player player, Material item)
     {
 	ItemStack handitem = player.getItemInHand();
 	Inventory inv = player.getInventory();
 	
 	if (!handitem.getType().equals(Material.AIR))
 	{
-	    if(inv.firstEmpty() < 0 || inv.firstEmpty() > 103)
+	    if(inv.firstEmpty() == -1)
 	    {
 		player.sendMessage(ChatColor.RED + "No space in your inventory");
-		return;
+		return false;
 	    }
 	    
 	    inv.setItem(inv.firstEmpty(), handitem);
@@ -61,5 +61,6 @@ public class ItemManager
 	}
 	
 	player.setItemInHand(new ItemStack(item, 1));
+	return true;
     }
 }
