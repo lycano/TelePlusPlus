@@ -44,7 +44,7 @@ public class PermissionsManager
     {
 	this.plugin = plugin;
 	
-	startoolmissions();
+	startPermissions();
     }
     
     public boolean hasPermission(Player player, String permission)
@@ -86,7 +86,7 @@ public class PermissionsManager
 	return Permissions != null;
     }
     
-    public void startoolmissions()
+    public void startPermissions()
     {
 	if (PermissionsManager.Permissions == null)
 	{
