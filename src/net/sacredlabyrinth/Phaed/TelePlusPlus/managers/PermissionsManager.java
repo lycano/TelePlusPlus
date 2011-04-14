@@ -42,65 +42,65 @@ public class PermissionsManager
     
     public PermissionsManager(TelePlusPlus plugin)
     {
-	this.plugin = plugin;
-	
-	startPermissions();
+    this.plugin = plugin;
+    
+    startPermissions();
     }
     
     public boolean hasPermission(Player player, String permission)
     {
-	if (player == null)
-	{
-	    return false;
-	}
+    if (player == null)
+    {
+        return false;
+    }
 
-	if (hasPermissionPlugin())
-	{
-	    return (Permissions != null && Permissions.has(player, permission));
-	}
-	else
-	{
-	    if (player.isOp())
-	    {
-		return true;
-	    }
-	    else
-	    {
-		if (permission.contains("admin"))
-		{
-		    return false;
-		}
-		
-		if (permission.contains("mod"))
-		{
-		    return false;
-		}
-		
-		return true;
-	    }
-	}	
+    if (hasPermissionPlugin())
+    {
+        return (Permissions != null && Permissions.has(player, permission));
+    }
+    else
+    {
+        if (player.isOp())
+        {
+        return true;
+        }
+        else
+        {
+        if (permission.contains("admin"))
+        {
+            return false;
+        }
+        
+        if (permission.contains("mod"))
+        {
+            return false;
+        }
+        
+        return true;
+        }
+    }    
     }
     
     private boolean hasPermissionPlugin()
     {
-	return Permissions != null;
+    return Permissions != null;
     }
     
     public void startPermissions()
     {
-	if (PermissionsManager.Permissions == null)
-	{
-	    Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
-	    
-	    if (test != null)
-	    {
-		if (!plugin.getServer().getPluginManager().isPluginEnabled(test))
-		{
-		    plugin.getServer().getPluginManager().enablePlugin(test);
-		}
-		
-		PermissionsManager.Permissions = ((Permissions) test).getHandler();
-	    }
-	}
+    if (PermissionsManager.Permissions == null)
+    {
+        Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
+        
+        if (test != null)
+        {
+        if (!plugin.getServer().getPluginManager().isPluginEnabled(test))
+        {
+            plugin.getServer().getPluginManager().enablePlugin(test);
+        }
+        
+        PermissionsManager.Permissions = ((Permissions) test).getHandler();
+        }
+    }
     }
 }

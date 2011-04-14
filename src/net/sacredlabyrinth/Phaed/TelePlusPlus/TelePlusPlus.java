@@ -40,24 +40,24 @@ public class TelePlusPlus extends JavaPlugin
     
     public void onEnable()
     {
-	playerListener = new TPPlayerListener(this);
-	entityListener = new TPEntityListener(this);
-	pm = new PermissionsManager(this);
-	sm = new SettingsManager(this);
-	rm = new RequestsManager(this);
-	tm = new TeleportManager(this);
-	tgm = new ToggleManager(this);
-	cm = new CommandManager(this);
-	gm = new GlassedManager(this);
-	im = new ItemManager(this);
-	mm = new MoverManager();
-	
-	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
-	
-	log = Logger.getLogger("Minecraft");
-	log.info("[" + name + "] version [" + this.getDescription().getVersion() + "] loaded");
+    playerListener = new TPPlayerListener(this);
+    entityListener = new TPEntityListener(this);
+    pm = new PermissionsManager(this);
+    sm = new SettingsManager(this);
+    rm = new RequestsManager(this);
+    tm = new TeleportManager(this);
+    tgm = new ToggleManager(this);
+    cm = new CommandManager(this);
+    gm = new GlassedManager(this);
+    im = new ItemManager(this);
+    mm = new MoverManager();
+    
+    getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
+    getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
+    getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
+    
+    log = Logger.getLogger("Minecraft");
+    log.info("[" + name + "] version [" + this.getDescription().getVersion() + "] loaded");
     }
     
     public void onDisable()
@@ -67,23 +67,23 @@ public class TelePlusPlus extends JavaPlugin
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
     {
-	try
-	{
-	    String[] split = args;
-	    String commandName = command.getName().toLowerCase();
-	    if (sender instanceof Player)
-	    {
-		if (commandName.equals("tp") || commandName.equals("tpp"))
-		{
-		    return cm.processCommand((Player) sender, split);
-		}
-	    }
-	    return false;
-	}
-	catch (Throwable ex)
-	{
-	    ex.printStackTrace();
-	    return true;
-	}
+    try
+    {
+        String[] split = args;
+        String commandName = command.getName().toLowerCase();
+        if (sender instanceof Player)
+        {
+        if (commandName.equals("tp") || commandName.equals("tpp"))
+        {
+            return cm.processCommand((Player) sender, split);
+        }
+        }
+        return false;
+    }
+    catch (Throwable ex)
+    {
+        ex.printStackTrace();
+        return true;
+    }
     }
 }

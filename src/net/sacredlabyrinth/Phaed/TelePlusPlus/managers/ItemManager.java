@@ -16,17 +16,17 @@ public class ItemManager
     
     public ItemManager(TelePlusPlus plugin)
     {
-    	this.plugin = plugin;
+        this.plugin = plugin;
     }
     
     public List<Integer> getThoughBlocks()
     {
-    	return plugin.sm.throughBlocks;
+        return plugin.sm.throughBlocks;
     }
     
     public boolean isThroughBlock(int itemid)
     {
-    	return plugin.sm.throughBlocks.contains(itemid);
+        return plugin.sm.throughBlocks.contains(itemid);
     }
     
     public boolean PutItemInHand(Player player, Material item)
@@ -66,7 +66,7 @@ public class ItemManager
             player.sendMessage(ChatColor.RED + "Can't you feel it? You already have this item in hand");
             return false;
         }
-        	
+            
         return true;
     }
 }

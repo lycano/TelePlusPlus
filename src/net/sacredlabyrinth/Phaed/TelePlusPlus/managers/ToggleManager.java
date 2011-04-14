@@ -13,23 +13,23 @@ public class ToggleManager
     
     public ToggleManager(TelePlusPlus plugin)
     {
-	//this.plugin = plugin;
+    //this.plugin = plugin;
     }
     
     public boolean toggle(Player player)
     {
-	if(toggled.contains(player.getName()))
-	{
-	    toggled.remove(player.getName());
-	    return false;
-	}
-	
-	toggled.add(player.getName());
-	return true;
+    if(toggled.contains(player.getName()))
+    {
+        toggled.remove(player.getName());
+        return false;
+    }
+    
+    toggled.add(player.getName());
+    return true;
     }
     
     public boolean isDisabled(Player player)
     {
-	return toggled.contains(player.getName());
+    return toggled.contains(player.getName());
     }
 }

@@ -12,49 +12,49 @@ public class Request
 
     public Request(String playername, String reason, Location location)
     {
-	this.playername = playername;
-	this.targetname = null;
-	this.location = location;
-	this.reason = reason;
-	this.minutes = 0;
+    this.playername = playername;
+    this.targetname = null;
+    this.location = location;
+    this.reason = reason;
+    this.minutes = 0;
     }
     
     public Request(String playername, String reason, String targetname)
     {
-	this.playername = playername;
-	this.targetname = targetname;
-	this.location = null;
-	this.reason = reason;
-	this.minutes = 0;
+    this.playername = playername;
+    this.targetname = targetname;
+    this.location = null;
+    this.reason = reason;
+    this.minutes = 0;
     }
     
     public String getReason()
     {
-	return reason;
+    return reason;
     }
     
     public String getPlayerName()
     {
-	return playername;
+    return playername;
     }
     
     public Location getLocation()
     {
-	return location;
+    return location;
     }
     
     public String getTargetName()
     {
-	return targetname;
+    return targetname;
     }    
     
     public int getMinutes()
     {
-	return minutes;
+    return minutes;
     }
     
     public void incrementMinutes()
     {
-	minutes = minutes + 1;
+    minutes = minutes + 1;
     }
 }

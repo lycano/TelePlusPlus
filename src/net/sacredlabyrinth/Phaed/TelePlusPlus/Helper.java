@@ -16,7 +16,7 @@ public class Helper
      */
     public static boolean isInteger(Object o)
     {
-	return o instanceof java.lang.Integer;
+    return o instanceof java.lang.Integer;
     }
     
     /**
@@ -24,15 +24,15 @@ public class Helper
      */
     public static boolean isNumber(String string)
     {
-	try
-	{
-	    Double.parseDouble(string);
-	}
-	catch (Exception e)
-	{
-	    return false;
-	}
-	return true;
+    try
+    {
+        Double.parseDouble(string);
+    }
+    catch (Exception e)
+    {
+        return false;
+    }
+    return true;
     }
     
     /**
@@ -40,15 +40,15 @@ public class Helper
      */
     public static boolean isInteger(String input)
     {
-	try
-	{
-	    Integer.parseInt(input);
-	    return true;
-	}
-	catch (Exception ex)
-	{
-	    return false;
-	}
+    try
+    {
+        Integer.parseInt(input);
+        return true;
+    }
+    catch (Exception ex)
+    {
+        return false;
+    }
     }
     
     /**
@@ -56,15 +56,15 @@ public class Helper
      */
     public static boolean isLong(String input)
     {
-	try
-	{
-	    Long.parseLong(input);
-	    return true;
-	}
-	catch (Exception ex)
-	{
-	    return false;
-	}
+    try
+    {
+        Long.parseLong(input);
+        return true;
+    }
+    catch (Exception ex)
+    {
+        return false;
+    }
     }
     
     /**
@@ -72,7 +72,7 @@ public class Helper
      */
     public static boolean isString(Object o)
     {
-	return o instanceof java.lang.String;
+    return o instanceof java.lang.String;
     }
     
     /**
@@ -80,7 +80,7 @@ public class Helper
      */
     public static boolean isBoolean(Object o)
     {
-	return o instanceof java.lang.Boolean;
+    return o instanceof java.lang.Boolean;
     }
     
     /**
@@ -88,15 +88,15 @@ public class Helper
      */
     public static String removeChar(String s, char c)
     {
-	String r = "";
-	
-	for (int i = 0; i < s.length(); i++)
-	{
-	    if (s.charAt(i) != c)
-		r += s.charAt(i);
-	}
-	
-	return r;
+    String r = "";
+    
+    for (int i = 0; i < s.length(); i++)
+    {
+        if (s.charAt(i) != c)
+        r += s.charAt(i);
+    }
+    
+    return r;
     }
     
     /**
@@ -104,11 +104,11 @@ public class Helper
      */
     public static String capitalize(String content)
     {
-	if (content.length() < 2)
-	    return content;
-	
-	String first = content.substring(0, 1).toUpperCase();
-	return first + content.substring(1);
+    if (content.length() < 2)
+        return content;
+    
+    String first = content.substring(0, 1).toUpperCase();
+    return first + content.substring(1);
     }
     
     
@@ -117,15 +117,15 @@ public class Helper
      */
     public static Player matchExactPlayer(TelePlusPlus plugin, String playername)
     {
-	List<Player> players = plugin.getServer().matchPlayer(playername);
-	
-	for (Player player : players)
-	{
-	    if (player.getName().equals(playername))
-		return player;
-	}
-	
-	return null;
+    List<Player> players = plugin.getServer().matchPlayer(playername);
+    
+    for (Player player : players)
+    {
+        if (player.getName().equals(playername))
+        return player;
+    }
+    
+    return null;
     }
     
     /**
@@ -133,14 +133,14 @@ public class Helper
      */
     public static Player matchUniquePlayer(TelePlusPlus plugin, String playername)
     {
-	List<Player> players = plugin.getServer().matchPlayer(playername);
-	
-	if(players.size() == 1)
-	{
-	    return players.get(0);
-	}
-	
-	return null;
+    List<Player> players = plugin.getServer().matchPlayer(playername);
+    
+    if(players.size() == 1)
+    {
+        return players.get(0);
+    }
+    
+    return null;
     }
     
     /**
@@ -148,18 +148,18 @@ public class Helper
      */
     public static String friendlyBlockType(String type)
     {
-	String out = "";
-	
-	type = type.toLowerCase().replace('_', ' ');
-	
-	String[] words = type.split("\\s+");
-	
-	for (String word : words)
-	{
-	    out += capitalize(word) + " ";
-	}
-	
-	return out.trim();
+    String out = "";
+    
+    type = type.toLowerCase().replace('_', ' ');
+    
+    String[] words = type.split("\\s+");
+    
+    for (String word : words)
+    {
+        out += capitalize(word) + " ";
+    }
+    
+    return out.trim();
     }
     
     /**
@@ -167,7 +167,7 @@ public class Helper
      */
     public static String plural(int count, String word, String ending)
     {
-	return count == 1 ? word : word + ending;
+    return count == 1 ? word : word + ending;
     }
     
     /**
@@ -175,7 +175,7 @@ public class Helper
      */
     public static double distance(Location from, Location to)
     {
-	return Math.sqrt(Math.pow(from.getX() - to.getX(), 2.0D) + Math.pow(from.getY() - to.getY(), 2.0D) + Math.pow(from.getZ() - to.getZ(), 2.0D));
+    return Math.sqrt(Math.pow(from.getX() - to.getX(), 2.0D) + Math.pow(from.getY() - to.getY(), 2.0D) + Math.pow(from.getZ() - to.getZ(), 2.0D));
     }
     
     /**
@@ -183,32 +183,32 @@ public class Helper
      */
     public static String entityArrayString(ArrayList<Entity> entities)
     {
-	String out = "";
-	
-	for (Entity entity : entities)
-	{
-	    if(entity instanceof Player)
-	    {
-		out += ", " + ((Player)entity).getName();
-	    }
-	    
-	    if(entity instanceof Animals)
-	    {
-		out += ", Animal";
-	    }
-	    
-	    if(entity instanceof Monster)
-	    {
-		out += ", Monster";
-	    }
-	}
-	
-	if(out.length() > 2)
-	{
-	    return out.substring(2);
-	}
-	
-	return out;
+    String out = "";
+    
+    for (Entity entity : entities)
+    {
+        if(entity instanceof Player)
+        {
+        out += ", " + ((Player)entity).getName();
+        }
+        
+        if(entity instanceof Animals)
+        {
+        out += ", Animal";
+        }
+        
+        if(entity instanceof Monster)
+        {
+        out += ", Monster";
+        }
+    }
+    
+    if(out.length() > 2)
+    {
+        return out.substring(2);
+    }
+    
+    return out;
     }
     
     /**
@@ -216,15 +216,15 @@ public class Helper
      */
     public static int wordLocation(String[] array, String word)
     {
-	for(int i = 0; i < array.length; i++)
-	{
-	    if(array[i].equals(word))
-	    {
-		return i;
-	    }
-	}
-	
-	return -1;
+    for(int i = 0; i < array.length; i++)
+    {
+        if(array[i].equals(word))
+        {
+        return i;
+        }
+    }
+    
+    return -1;
     }    
     
     /**
@@ -232,6 +232,6 @@ public class Helper
      */
     public static String formatLocation(Location loc)
     {
-	return "[" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+    return "[" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
     }
 }
