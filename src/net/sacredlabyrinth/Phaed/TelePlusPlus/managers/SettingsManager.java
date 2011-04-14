@@ -102,7 +102,6 @@ public class SettingsManager
     /**
      * Load the configuration
      */
-    @SuppressWarnings("unchecked")
     public void loadConfiguration()
     {
 	Configuration config = plugin.getConfiguration();
