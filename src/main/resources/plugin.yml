@@ -1,0 +1,32 @@
+name: TelePlusPlus
+main: net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus
+version: 1.3.3a
+website: www.bukkit.org
+description: The complete teleporting solution for bukkit powered servers
+author: Lycano, Phaed
+commands:
+    tp:
+        description: All of the Tele++ commands
+    tpp:
+        aliases: [tp]
+        description: All of the Tele++ commands
+        usage: |
+            /<command> [player] - Teleport to another player
+            /<command> [x] [y] [z] - Teleport to coordinates
+            /<command> [player(s)] to [player] - Teleports player(s) to a player
+            /<command> [player(s)] to [x] [y] [z] - Teleports player(s) to coordinates
+            /<command> [world] <x> <y> <z> - Teleport to world optionally with coordinates
+            /<command> here [player(s)] - Teleport player(s) to your location
+            /<command> mass - Teleport all players to you
+            /<command> top - Teleport to the block highest above you
+            /<command> up <height> - Teleport up on a glass block
+            /<command> above [player] <height> - Teleport 5 (or height) blocks above any player on a glass block
+            /<command> jump - Teleport to the block you're looking at
+            /<command> toggle - Toggle teleporting to you on/off
+            /<command> back - Teleport back to your previous locations
+            /<command> origin - Go back to where you were before all tps
+            /<command> clear - Clear your entire tp history and bone selections
+            /<command> tool - Get a <configured item> to tp yourself around
+            /<command> mover - Get a <configured item> to tp blocks and entities around
+            /<command> request [player|x y z] [reason] - Request tp
+ 
