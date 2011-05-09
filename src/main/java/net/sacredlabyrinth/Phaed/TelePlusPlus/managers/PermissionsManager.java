@@ -9,8 +9,7 @@ import org.bukkit.plugin.Plugin;
 
 import org.bukkit.entity.Player;
 
-public class PermissionsManager
-{
+public class PermissionsManager {
     public static PermissionHandler Permissions = null;
     private TelePlusPlus plugin;
     
@@ -40,67 +39,51 @@ public class PermissionsManager
     public final String bypassNoTp = "tpp.admin.bypass.notp";
     public final String request = "tpp.request";
     
-    public PermissionsManager(TelePlusPlus plugin)
-    {
-    this.plugin = plugin;
-    
-    startPermissions();
-    }
-    
-    public boolean hasPermission(Player player, String permission)
-    {
-    if (player == null)
-    {
-        return false;
-    }
+    public PermissionsManager(TelePlusPlus plugin) {
+        this.plugin = plugin;
 
-    if (hasPermissionPlugin())
-    {
-        return (Permissions != null && Permissions.has(player, permission));
-    }
-    else
-    {
-        if (player.isOp())
-        {
-        return true;
-        }
-        else
-        {
-        if (permission.contains("admin"))
-        {
-            return false;
-        }
-        
-        if (permission.contains("mod"))
-        {
-            return false;
-        }
-        
-        return true;
-        }
-    }    
+        startPermissions();
     }
     
-    private boolean hasPermissionPlugin()
-    {
-    return Permissions != null;
+    public boolean hasPermission(Player player, String permission) {
+        if (player == null) {
+            return false;
+        }
+
+        if (hasPermissionPlugin()) {
+            return (Permissions != null && Permissions.has(player, permission));
+        } else {
+            if (player.isOp()) {
+                return true;
+            } else {
+                if (permission.contains("admin")) {
+                    return false;
+                }
+
+                if (permission.contains("mod")) {
+                    return false;
+                }
+
+                return true;
+            }
+        }    
     }
     
-    public void startPermissions()
-    {
-    if (PermissionsManager.Permissions == null)
-    {
-        Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
-        
-        if (test != null)
-        {
-        if (!plugin.getServer().getPluginManager().isPluginEnabled(test))
-        {
-            plugin.getServer().getPluginManager().enablePlugin(test);
-        }
-        
-        PermissionsManager.Permissions = ((Permissions) test).getHandler();
-        }
+    private boolean hasPermissionPlugin() {
+        return Permissions != null;
     }
+    
+    public void startPermissions() {
+        if (PermissionsManager.Permissions == null) {
+            Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
+
+            if (test != null) {
+                if (!plugin.getServer().getPluginManager().isPluginEnabled(test)) {
+                    plugin.getServer().getPluginManager().enablePlugin(test);
+                }
+
+                PermissionsManager.Permissions = ((Permissions) test).getHandler();
+            }
+        }
     }
 }

@@ -12,8 +12,7 @@ import org.bukkit.util.Vector;
 /**
  * @author toi Thanks to Raphfrk for optimization of this class.
  */
-public class TargetBlock
-{    
+public class TargetBlock {    
     private Location loc;
     private double viewHeight;
     private int maxDistance;
@@ -31,9 +30,8 @@ public class TargetBlock
      * @param player
      *                Player to work with
      */
-    public TargetBlock(Player player)
-    {
-    this.setValues(player.getLocation(), 300, 1.65, 0.2, null);
+    public TargetBlock(Player player) {
+        this.setValues(player.getLocation(), 300, 1.65, 0.2, null);
     }
     
     /**
@@ -42,9 +40,8 @@ public class TargetBlock
      * @param loc
      *                Location to work with
      */
-    public TargetBlock(Location loc)
-    {
-    this.setValues(loc, 300, 0, 0.2, null);
+    public TargetBlock(Location loc) {
+        this.setValues(loc, 300, 0, 0.2, null);
     }
     
     /**
@@ -57,9 +54,8 @@ public class TargetBlock
      * @param checkDistance
      *                How often to check for blocks, the smaller the more precise
      */
-    public TargetBlock(Player player, int maxDistance, double checkDistance)
-    {
-    this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, null);
+    public TargetBlock(Player player, int maxDistance, double checkDistance) {
+        this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, null);
     }
     
     /**
@@ -72,9 +68,8 @@ public class TargetBlock
      * @param checkDistance
      *                How often to check for blocks, the smaller the more precise
      */
-    public TargetBlock(Location loc, int maxDistance, double checkDistance)
-    {
-    this.setValues(loc, maxDistance, 0, checkDistance, null);
+    public TargetBlock(Location loc, int maxDistance, double checkDistance) {
+        this.setValues(loc, maxDistance, 0, checkDistance, null);
     }
     
     /**
@@ -89,9 +84,8 @@ public class TargetBlock
      * @param blocksToIgnore
      *                Integer array of what block ids to ignore while checking for viable targets
      */
-    public TargetBlock(Player player, int maxDistance, double checkDistance, int[] blocksToIgnore)
-    {
-    this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, blocksToIgnore);
+    public TargetBlock(Player player, int maxDistance, double checkDistance, int[] blocksToIgnore) {
+        this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, blocksToIgnore);
     }
     
     /**
@@ -106,9 +100,8 @@ public class TargetBlock
      * @param blocksToIgnore
      *                Array of what block ids to ignore while checking for viable targets
      */
-    public TargetBlock(Location loc, int maxDistance, double checkDistance, int[] blocksToIgnore)
-    {
-    this.setValues(loc, maxDistance, 0, checkDistance, blocksToIgnore);
+    public TargetBlock(Location loc, int maxDistance, double checkDistance, int[] blocksToIgnore) {
+        this.setValues(loc, maxDistance, 0, checkDistance, blocksToIgnore);
     }
     
     /**
@@ -123,10 +116,9 @@ public class TargetBlock
      * @param blocksToIgnore
      *                String ArrayList of what block ids to ignore while checking for viable targets
      */
-    public TargetBlock(Player player, int maxDistance, double checkDistance, ArrayList<String> blocksToIgnore)
-    {
-    int[] bti = this.convertStringArraytoIntArray(blocksToIgnore);
-    this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, bti);
+    public TargetBlock(Player player, int maxDistance, double checkDistance, ArrayList<String> blocksToIgnore) {
+        int[] bti = this.convertStringArraytoIntArray(blocksToIgnore);
+        this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, bti);
     }
     
     
@@ -142,10 +134,9 @@ public class TargetBlock
      * @param blocksToIgnore
      *                Integer List of what block ids to ignore while checking for viable targets
      */
-    public TargetBlock(Player player, int maxDistance, double checkDistance, List<Integer> blocksToIgnore)
-    {
-    int[] bti = this.convertIntListtoIntArray(blocksToIgnore);
-    this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, bti);
+    public TargetBlock(Player player, int maxDistance, double checkDistance, List<Integer> blocksToIgnore) {
+        int[] bti = this.convertIntListtoIntArray(blocksToIgnore);
+        this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, bti);
     }
     
     /**
@@ -160,10 +151,9 @@ public class TargetBlock
      * @param blocksToIgnore
      *                String ArrayList of what block ids to ignore while checking for viable targets
      */
-    public TargetBlock(Location loc, int maxDistance, double checkDistance, ArrayList<String> blocksToIgnore)
-    {
-    int[] bti = this.convertStringArraytoIntArray(blocksToIgnore);
-    this.setValues(loc, maxDistance, 0, checkDistance, bti);
+    public TargetBlock(Location loc, int maxDistance, double checkDistance, ArrayList<String> blocksToIgnore) {
+        int[] bti = this.convertStringArraytoIntArray(blocksToIgnore);
+        this.setValues(loc, maxDistance, 0, checkDistance, bti);
     }
     
     
@@ -179,10 +169,9 @@ public class TargetBlock
      * @param blocksToIgnore
      *                Integer List of what block ids to ignore while checking for viable targets
      */
-    public TargetBlock(Location loc, int maxDistance, double checkDistance, List<Integer> blocksToIgnore)
-    {
-    int[] bti = this.convertIntListtoIntArray(blocksToIgnore);
-    this.setValues(loc, maxDistance, 0, checkDistance, bti);
+    public TargetBlock(Location loc, int maxDistance, double checkDistance, List<Integer> blocksToIgnore) {
+        int[] bti = this.convertIntListtoIntArray(blocksToIgnore);
+        this.setValues(loc, maxDistance, 0, checkDistance, bti);
     }
     
     /**
@@ -199,36 +188,34 @@ public class TargetBlock
      * @param blocksToIgnore
      *                Ids of blocks to ignore while checking for viable targets
      */
-    private void setValues(Location loc, int maxDistance, double viewHeight, double checkDistance, int[] blocksToIgnore)
-    {
-    this.loc = loc;
-    this.maxDistance = maxDistance;
-    this.viewHeight = viewHeight;
-    this.checkDistance = checkDistance;
-    this.blockToIgnore = blocksToIgnore;
-    this.curDistance = 0;
-    xRotation = (loc.getYaw() + 90) % 360;
-    yRotation = loc.getPitch() * -1;
-    
-    double h = (checkDistance * Math.cos(Math.toRadians(yRotation)));
-    offset.setY((checkDistance * Math.sin(Math.toRadians(yRotation))));
-    offset.setX((h * Math.cos(Math.toRadians(xRotation))));
-    offset.setZ((h * Math.sin(Math.toRadians(xRotation))));
-    
-    targetPosDouble = new Vector(loc.getX(), loc.getY() + viewHeight, loc.getZ());
-    targetPos = new Vector(targetPosDouble.getBlockX(), targetPosDouble.getBlockY(), targetPosDouble.getBlockZ());
-    prevPos = targetPos.clone();
+    private void setValues(Location loc, int maxDistance, double viewHeight, double checkDistance, int[] blocksToIgnore) {
+        this.loc = loc;
+        this.maxDistance = maxDistance;
+        this.viewHeight = viewHeight;
+        this.checkDistance = checkDistance;
+        this.blockToIgnore = blocksToIgnore;
+        this.curDistance = 0;
+        xRotation = (loc.getYaw() + 90) % 360;
+        yRotation = loc.getPitch() * -1;
+
+        double h = (checkDistance * Math.cos(Math.toRadians(yRotation)));
+        offset.setY((checkDistance * Math.sin(Math.toRadians(yRotation))));
+        offset.setX((h * Math.cos(Math.toRadians(xRotation))));
+        offset.setZ((h * Math.sin(Math.toRadians(xRotation))));
+
+        targetPosDouble = new Vector(loc.getX(), loc.getY() + viewHeight, loc.getZ());
+        targetPos = new Vector(targetPosDouble.getBlockX(), targetPosDouble.getBlockY(), targetPosDouble.getBlockZ());
+        prevPos = targetPos.clone();
     }
     
     /**
      * Call this to reset checking position to allow you to check for a new target with the same TargetBlock instance.
      */
-    public void reset()
-    {
-    targetPosDouble = new Vector(loc.getX(), loc.getY() + viewHeight, loc.getZ());
-    targetPos = new Vector(targetPosDouble.getBlockX(), targetPosDouble.getBlockY(), targetPosDouble.getBlockZ());
-    prevPos = targetPos.clone();
-    this.curDistance = 0;
+    public void reset() {
+        targetPosDouble = new Vector(loc.getX(), loc.getY() + viewHeight, loc.getZ());
+        targetPos = new Vector(targetPosDouble.getBlockX(), targetPosDouble.getBlockY(), targetPosDouble.getBlockZ());
+        prevPos = targetPos.clone();
+        this.curDistance = 0;
     }
     
     /**
@@ -236,16 +223,15 @@ public class TargetBlock
      * 
      * @return double
      */
-    public double getDistanceToBlock()
-    {
-    Vector blockUnderPlayer = new Vector((int) Math.floor(loc.getX() + 0.5), (int) Math.floor(loc.getY() - 0.5), (int) Math.floor(loc.getZ() + 0.5));
-    
-    Block blk = getTargetBlock();
-    double x = blk.getX() - blockUnderPlayer.getBlockX();
-    double y = blk.getY() - blockUnderPlayer.getBlockY();
-    double z = blk.getZ() - blockUnderPlayer.getBlockZ();
-    
-    return Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)));
+    public double getDistanceToBlock() {
+        Vector blockUnderPlayer = new Vector((int) Math.floor(loc.getX() + 0.5), (int) Math.floor(loc.getY() - 0.5), (int) Math.floor(loc.getZ() + 0.5));
+
+        Block blk = getTargetBlock();
+        double x = blk.getX() - blockUnderPlayer.getBlockX();
+        double y = blk.getY() - blockUnderPlayer.getBlockY();
+        double z = blk.getZ() - blockUnderPlayer.getBlockZ();
+
+        return Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)));
     }
     
     /**
@@ -253,16 +239,15 @@ public class TargetBlock
      * 
      * @return int
      */
-    public int getDistanceToBlockRounded()
-    {
-    Vector blockUnderPlayer = new Vector((int) Math.floor(loc.getX() + 0.5), (int) Math.floor(loc.getY() - 0.5), (int) Math.floor(loc.getZ() + 0.5));
-    
-    Block blk = getTargetBlock();
-    double x = blk.getX() - blockUnderPlayer.getBlockX();
-    double y = blk.getY() - blockUnderPlayer.getBlockY();
-    double z = blk.getZ() - blockUnderPlayer.getBlockZ();
-    
-    return (int) Math.round((Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))));
+    public int getDistanceToBlockRounded() {
+        Vector blockUnderPlayer = new Vector((int) Math.floor(loc.getX() + 0.5), (int) Math.floor(loc.getY() - 0.5), (int) Math.floor(loc.getZ() + 0.5));
+
+        Block blk = getTargetBlock();
+        double x = blk.getX() - blockUnderPlayer.getBlockX();
+        double y = blk.getY() - blockUnderPlayer.getBlockY();
+        double z = blk.getZ() - blockUnderPlayer.getBlockZ();
+
+        return (int) Math.round((Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))));
     }
     
     /**
@@ -270,10 +255,9 @@ public class TargetBlock
      * 
      * @return int
      */
-    public int getXDistanceToBlock()
-    {
-    this.reset();
-    return (int) Math.floor(getTargetBlock().getX() - loc.getBlockX() + 0.5);
+    public int getXDistanceToBlock() {
+        this.reset();
+        return (int) Math.floor(getTargetBlock().getX() - loc.getBlockX() + 0.5);
     }
     
     /**
@@ -281,10 +265,9 @@ public class TargetBlock
      * 
      * @return int
      */
-    public int getYDistanceToBlock()
-    {
-    this.reset();
-    return (int) Math.floor(getTargetBlock().getY() - loc.getBlockY() + viewHeight);
+    public int getYDistanceToBlock() {
+        this.reset();
+        return (int) Math.floor(getTargetBlock().getY() - loc.getBlockY() + viewHeight);
     }
     
     /**
@@ -292,10 +275,9 @@ public class TargetBlock
      * 
      * @return int
      */
-    public int getZDistanceToBlock()
-    {
-    this.reset();
-    return (int) Math.floor(getTargetBlock().getZ() - loc.getBlockZ() + 0.5);
+    public int getZDistanceToBlock() {
+        this.reset();
+        return (int) Math.floor(getTargetBlock().getZ() - loc.getBlockZ() + 0.5);
     }
     
     /**
@@ -303,11 +285,10 @@ public class TargetBlock
      * 
      * @return Block
      */
-    public Block getTargetBlock()
-    {
-    this.reset();
-    while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
-    return getCurrentBlock();
+    public Block getTargetBlock() {
+        this.reset();
+        while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
+        return getCurrentBlock();
     }
     
     /**
@@ -317,20 +298,20 @@ public class TargetBlock
      *                ID of type to set the block to
      * @return boolean
      */
-    public boolean setTargetBlock(int typeID)
-    {
-    if (Material.getMaterial(typeID) != null)
-    {
-        this.reset();
-        while (getNextBlock() != null && getCurrentBlock().getTypeId() == 0);
-        if (getCurrentBlock() != null)
-        {
-        Block blk = loc.getWorld().getBlockAt(targetPos.getBlockX(), targetPos.getBlockY(), targetPos.getBlockZ());
-        blk.setTypeId(typeID);
-        return true;
+    public boolean setTargetBlock(int typeID) {
+        if (Material.getMaterial(typeID) != null) {
+            this.reset();
+            while (getNextBlock() != null && getCurrentBlock().getTypeId() == 0);
+            
+            if (getCurrentBlock() != null) {
+                Block blk = loc.getWorld().getBlockAt(targetPos.getBlockX(), targetPos.getBlockY(), targetPos.getBlockZ());
+                blk.setTypeId(typeID);
+                
+                return true;
+            }
         }
-    }
-    return false;
+        
+        return false;
     }
     
     /**
@@ -340,17 +321,17 @@ public class TargetBlock
      *                Material to set the block to
      * @return boolean
      */
-    public boolean setTargetBlock(Material type)
-    {
-    this.reset();
-    while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
-    if (getCurrentBlock() != null)
-    {
-        Block blk = loc.getWorld().getBlockAt(targetPos.getBlockX(), targetPos.getBlockY(), targetPos.getBlockZ());
-        blk.setType(type);
-        return true;
-    }
-    return false;
+    public boolean setTargetBlock(Material type) {
+        this.reset();
+        while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
+        
+        if (getCurrentBlock() != null) {
+            Block blk = loc.getWorld().getBlockAt(targetPos.getBlockX(), targetPos.getBlockY(), targetPos.getBlockZ());
+            blk.setType(type);
+            return true;
+        }
+        
+        return false;
     }
     
     /**
@@ -360,21 +341,21 @@ public class TargetBlock
      *                Name of type to set the block to
      * @return boolean
      */
-    public boolean setTargetBlock(String type)
-    {
-    Material mat = Material.valueOf(type);
-    if (mat != null)
-    {
-        this.reset();
-        while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
-        if (getCurrentBlock() != null)
-        {
-        Block blk = loc.getWorld().getBlockAt(targetPos.getBlockX(), targetPos.getBlockY(), targetPos.getBlockZ());
-        blk.setType(mat);
-        return true;
+    public boolean setTargetBlock(String type) {
+        Material mat = Material.valueOf(type);
+        if (mat != null) {
+            this.reset();
+            while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
+            
+            if (getCurrentBlock() != null) {
+                Block blk = loc.getWorld().getBlockAt(targetPos.getBlockX(), targetPos.getBlockY(), targetPos.getBlockZ());
+                blk.setType(mat);
+                
+                return true;
+            }
         }
-    }
-    return false;
+        
+        return false;
     }
     
     /**
@@ -382,17 +363,14 @@ public class TargetBlock
      * 
      * @return Block
      */
-    public Block getFaceBlock()
-    {
-    while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
-    if (getCurrentBlock() != null)
-    {
-        return getPreviousBlock();
-    }
-    else
-    {
-        return null;
-    }
+    public Block getFaceBlock() {
+        while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
+        
+        if (getCurrentBlock() != null) {
+            return getPreviousBlock();
+        } else {
+            return null;
+        }
     }
     
     /**
@@ -401,18 +379,17 @@ public class TargetBlock
      * @param typeID
      * @return boolean
      */
-    public boolean setFaceBlock(int typeID)
-    {
-    if (Material.getMaterial(typeID) != null)
-    {
-        if (getCurrentBlock() != null)
-        {
-        Block blk = loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
-        blk.setTypeId(typeID);
-        return true;
+    public boolean setFaceBlock(int typeID) {
+        if (Material.getMaterial(typeID) != null) {
+            if (getCurrentBlock() != null) {
+                Block blk = loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
+                blk.setTypeId(typeID);
+                
+                return true;
+            }
         }
-    }
-    return false;
+        
+        return false;
     }
     
     /**
@@ -421,15 +398,15 @@ public class TargetBlock
      * @param type
      * @return boolean
      */
-    public boolean setFaceBlock(Material type)
-    {
-    if (getCurrentBlock() != null)
-    {
-        Block blk = loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
-        blk.setType(type);
-        return true;
-    }
-    return false;
+    public boolean setFaceBlock(Material type) {
+        if (getCurrentBlock() != null) {
+            Block blk = loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
+            blk.setType(type);
+            
+            return true;
+        }
+        
+        return false;
     }
     
     /**
@@ -438,19 +415,18 @@ public class TargetBlock
      * @param type
      * @return boolean
      */
-    public boolean setFaceBlock(String type)
-    {
-    Material mat = Material.valueOf(type);
-    if (mat != null)
-    {
-        if (getCurrentBlock() != null)
-        {
-        Block blk = loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
-        blk.setType(mat);
-        return true;
+    public boolean setFaceBlock(String type) {
+        Material mat = Material.valueOf(type);
+        if (mat != null) {
+            if (getCurrentBlock() != null) {
+                Block blk = loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
+                blk.setType(mat);
+                
+                return true;
+            }
         }
-    }
-    return false;
+        
+        return false;
     }
     
     /**
@@ -458,25 +434,22 @@ public class TargetBlock
      * 
      * @return Block
      */
-    public Block getNextBlock()
-    {
-    prevPos = targetPos.clone();
-    do
-    {
-        curDistance += checkDistance;
+    public Block getNextBlock() {
+        prevPos = targetPos.clone();
+        do {
+            curDistance += checkDistance;
+
+            targetPosDouble.setX(offset.getX() + targetPosDouble.getX());
+            targetPosDouble.setY(offset.getY() + targetPosDouble.getY());
+            targetPosDouble.setZ(offset.getZ() + targetPosDouble.getZ());
+            
+            targetPos = new Vector(targetPosDouble.getBlockX(), targetPosDouble.getBlockY(), targetPosDouble.getBlockZ());
+        } while (curDistance <= maxDistance && targetPos.getBlockX() == prevPos.getBlockX() && targetPos.getBlockY() == prevPos.getBlockY() && targetPos.getBlockZ() == prevPos.getBlockZ());
         
-        targetPosDouble.setX(offset.getX() + targetPosDouble.getX());
-        targetPosDouble.setY(offset.getY() + targetPosDouble.getY());
-        targetPosDouble.setZ(offset.getZ() + targetPosDouble.getZ());
-        targetPos = new Vector(targetPosDouble.getBlockX(), targetPosDouble.getBlockY(), targetPosDouble.getBlockZ());
-    }
-    while (curDistance <= maxDistance && targetPos.getBlockX() == prevPos.getBlockX() && targetPos.getBlockY() == prevPos.getBlockY() && targetPos.getBlockZ() == prevPos.getBlockZ());
-    if (curDistance > maxDistance)
-    {
-        return null;
-    }
-    
-    return this.loc.getWorld().getBlockAt(this.targetPos.getBlockX(), this.targetPos.getBlockY(), this.targetPos.getBlockZ());
+        if (curDistance > maxDistance)
+            return null;
+
+        return this.loc.getWorld().getBlockAt(this.targetPos.getBlockX(), this.targetPos.getBlockY(), this.targetPos.getBlockZ());
     }
     
     /**
@@ -484,16 +457,12 @@ public class TargetBlock
      * 
      * @return Block
      */
-    public Block getCurrentBlock()
-    {
-    if (curDistance > maxDistance)
-    {
-        return null;
-    }
-    else
-    {
-        return this.loc.getWorld().getBlockAt(this.targetPos.getBlockX(), this.targetPos.getBlockY(), this.targetPos.getBlockZ());
-    }
+    public Block getCurrentBlock() {
+        if (curDistance > maxDistance) {
+            return null;
+        } else {
+            return this.loc.getWorld().getBlockAt(this.targetPos.getBlockX(), this.targetPos.getBlockY(), this.targetPos.getBlockZ());
+        }
     }
     
     /**
@@ -501,18 +470,16 @@ public class TargetBlock
      * 
      * @param typeID
      */
-    public boolean setCurrentBlock(int typeID)
-    {
-    if (Material.getMaterial(typeID) != null)
-    {
-        Block blk = getCurrentBlock();
-        if (blk != null)
-        {
-        blk.setTypeId(typeID);
-        return true;
+    public boolean setCurrentBlock(int typeID) {
+        if (Material.getMaterial(typeID) != null) {
+            Block blk = getCurrentBlock();
+            if (blk != null) {
+                blk.setTypeId(typeID);
+                return true;
+            }
         }
-    }
-    return false;
+        
+        return false;
     }
     
     /**
@@ -520,15 +487,14 @@ public class TargetBlock
      * 
      * @param type
      */
-    public boolean setCurrentBlock(Material type)
-    {
-    Block blk = getCurrentBlock();
-    if (blk != null)
-    {
-        blk.setType(type);
-        return true;
-    }
-    return false;
+    public boolean setCurrentBlock(Material type) {
+        Block blk = getCurrentBlock();
+        if (blk != null) {
+            blk.setType(type);
+            return true;
+        }
+        
+        return false;
     }
     
     /**
@@ -536,19 +502,17 @@ public class TargetBlock
      * 
      * @param type
      */
-    public boolean setCurrentBlock(String type)
-    {
-    Material mat = Material.valueOf(type);
-    if (mat != null)
-    {
-        Block blk = getCurrentBlock();
-        if (blk != null)
-        {
-        blk.setType(mat);
-        return true;
+    public boolean setCurrentBlock(String type) {
+        Material mat = Material.valueOf(type);
+        if (mat != null) {
+            Block blk = getCurrentBlock();
+            if (blk != null) {
+                blk.setType(mat);
+                return true;
+            }
         }
-    }
-    return false;
+        
+        return false;
     }
     
     /**
@@ -556,9 +520,8 @@ public class TargetBlock
      * 
      * @return Block
      */
-    public Block getPreviousBlock()
-    {
-    return this.loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
+    public Block getPreviousBlock() {
+        return this.loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
     }
     
     /**
@@ -566,18 +529,16 @@ public class TargetBlock
      * 
      * @param typeID
      */
-    public boolean setPreviousBlock(int typeID)
-    {
-    if (Material.getMaterial(typeID) != null)
-    {
-        Block blk = getPreviousBlock();
-        if (blk != null)
-        {
-        blk.setTypeId(typeID);
-        return true;
+    public boolean setPreviousBlock(int typeID) {
+        if (Material.getMaterial(typeID) != null) {
+            Block blk = getPreviousBlock();
+            if (blk != null) {
+                blk.setTypeId(typeID);
+                return true;
+            }
         }
-    }
-    return false;
+        
+        return false;
     }
     
     /**
@@ -585,15 +546,14 @@ public class TargetBlock
      * 
      * @param type
      */
-    public boolean setPreviousBlock(Material type)
-    {
-    Block blk = getPreviousBlock();
-    if (blk != null)
-    {
-        blk.setType(type);
-        return true;
-    }
-    return false;
+    public boolean setPreviousBlock(Material type) {
+        Block blk = getPreviousBlock();
+        if (blk != null) {
+            blk.setType(type);
+            return true;
+        }
+        
+        return false;
     }
     
     /**
@@ -601,77 +561,64 @@ public class TargetBlock
      * 
      * @param type
      */
-    public boolean setPreviousBlock(String type)
-    {
-    Material mat = Material.valueOf(type);
-    if (mat != null)
-    {
-        Block blk = getPreviousBlock();
-        if (blk != null)
-        {
-        blk.setType(mat);
-        return true;
+    public boolean setPreviousBlock(String type) {
+        Material mat = Material.valueOf(type);
+        if (mat != null) {
+            Block blk = getPreviousBlock();
+            if (blk != null) {
+                blk.setType(mat);
+                return true;
+            }
         }
-    }
-    return false;
+        
+        return false;
     }
     
-    private int[] convertStringArraytoIntArray(ArrayList<String> array)
-    {
-    if (array != null)
-    {
-        int intarray[] = new int[array.size()];
-        for (int i = 0; i < array.size(); i++)
-        {
-        try
-        {
-            intarray[i] = Integer.parseInt(array.get(i));
+    private int[] convertStringArraytoIntArray(ArrayList<String> array) {
+        if (array != null) {
+            int intarray[] = new int[array.size()];
+            for (int i = 0; i < array.size(); i++) {
+                try {
+                    intarray[i] = Integer.parseInt(array.get(i));
+                } catch (NumberFormatException nfe) {
+                    intarray[i] = 0;
+                }
+            }
+            
+            return intarray;
         }
-        catch (NumberFormatException nfe)
-        {
-            intarray[i] = 0;
-        }
-        }
-        return intarray;
-    }
-    return null;
+        
+        return null;
     }
     
-    private int[] convertIntListtoIntArray(List<Integer> array)
-    {
-    if (array != null)
-    {
-        int intarray[] = new int[array.size()];
-        for (int i = 0; i < array.size(); i++)
-        {
-        try
-        {
-            intarray[i] = array.get(i);
+    private int[] convertIntListtoIntArray(List<Integer> array) {
+        if (array != null) {
+            int intarray[] = new int[array.size()];
+            for (int i = 0; i < array.size(); i++) {
+                try {
+                    intarray[i] = array.get(i);
+                } catch (NumberFormatException nfe) {
+                    intarray[i] = 0;
+                }
+            }
+            
+            return intarray;
         }
-        catch (NumberFormatException nfe)
-        {
-            intarray[i] = 0;
-        }
-        }
-        return intarray;
-    }
-    return null;
+        
+        return null;
     }
     
     
-    private boolean blockToIgnoreHasValue(int value)
-    {
-    if (this.blockToIgnore != null)
-    {
-        if (this.blockToIgnore.length > 0)
-        {
-        for (int i : this.blockToIgnore)
-        {
-            if (i == value)
-            return true;
+    private boolean blockToIgnoreHasValue(int value) {
+        if (this.blockToIgnore != null) {
+            if (this.blockToIgnore.length > 0) {
+                for (int i : this.blockToIgnore) {
+                    if (i == value)
+                        return true;
+                }
+            }
         }
-        }
-    }
-    return false;
+        
+        return false;
     }
 }

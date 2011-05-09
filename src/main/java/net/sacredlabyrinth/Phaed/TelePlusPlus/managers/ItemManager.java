@@ -10,36 +10,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class ItemManager
-{
+public class ItemManager {
     private TelePlusPlus plugin;
     
-    public ItemManager(TelePlusPlus plugin)
-    {
+    public ItemManager(TelePlusPlus plugin) {
         this.plugin = plugin;
     }
     
-    public List<Integer> getThoughBlocks()
-    {
+    public List<Integer> getThoughBlocks() {
         return plugin.sm.throughBlocks;
     }
     
-    public boolean isThroughBlock(int itemid)
-    {
+    public boolean isThroughBlock(int itemid) {
         return plugin.sm.throughBlocks.contains(itemid);
     }
     
-    public boolean PutItemInHand(Player player, Material item)
-    {
+    public boolean PutItemInHand(Player player, Material item) {
         ItemStack handitem = player.getItemInHand();
         Inventory inv = player.getInventory();
         
-        if (!handitem.getType().equals(item))
-        {
-            if (!handitem.getType().equals(Material.AIR))
-            {
-                if(inv.firstEmpty() == -1)
-                {
+        if (!handitem.getType().equals(item)) {
+            if (!handitem.getType().equals(Material.AIR)) {
+                if(inv.firstEmpty() == -1) {
                     player.sendMessage(ChatColor.RED + "No space in your inventory");
                     return false;
                 }
@@ -47,19 +39,17 @@ public class ItemManager
                 inv.setItem(inv.firstEmpty(), handitem);
             }
         
-        if (inv.contains(item))
-        {
-            Integer slotId = inv.first(item);
-            ItemStack stack = inv.getItem(slotId);
-            Integer stackAmount = stack.getAmount();
-        
-            if (stackAmount > 1 )
-            { 
-                stack.setAmount( stackAmount - 1 );
-            } else { 
-                inv.clear(slotId);
+            if (inv.contains(item)) {
+                Integer slotId = inv.first(item);
+                ItemStack stack = inv.getItem(slotId);
+                Integer stackAmount = stack.getAmount();
+
+                if (stackAmount > 1 ) { 
+                    stack.setAmount( stackAmount - 1 );
+                } else { 
+                    inv.clear(slotId);
+                }
             }
-        }
         
             player.setItemInHand(new ItemStack(item, 1));
         } else {

@@ -1,0 +1,102 @@
+log:
+    tp:
+        player: true
+        coords: true
+        here: true         
+        toggle: true
+        back: true
+        origin: true
+    others:
+        player: true
+        coords: true
+    world:
+        tp: true
+    jump:
+        top: false
+        up: false
+        jump: true
+    mod:
+        above: true
+        mass: true         
+        tool: true
+        mover: true
+    request: true       
+notify:
+    tp:
+        player: true
+        coords: true
+        here: true         
+        toggle: true
+        back: true
+        origin: true
+    others:
+        player: true
+        coords: true
+    world:
+        tp: true
+    jump:
+        top: false
+        up: false
+        jump: true
+    mod:
+        above: true
+        mass: true         
+        tool: true
+        mover: true
+    request: true
+say:
+    tp:
+        player: true
+        coords: true
+        here: true         
+        toggle: true
+        back: true
+        origin: true
+    others:
+        player: true
+        coords: true
+    world:
+        tp: true
+    jump:
+        top: false
+        up: false
+        jump: true
+    mod:
+        above: true
+        mass: true         
+        tool: true
+        mover: true
+    request: true  
+disable:
+    tp:
+        player: false
+        coords: false
+        here: false         
+        toggle: false
+        clear: false
+        back: false
+        origin: false      
+    others:
+        player: false
+        coords: false
+    world:
+        tp: false
+    jump:
+        top: false
+        up: false
+        jump: false
+    mod:
+        above: false
+        mass: false         
+        tool: false
+        mover: false
+    request: false        
+glassed:
+    fall-block-distance: 5
+    fall-immunity: true   
+    fall-immunity-seconds: 5        
+settings:
+    through-blocks: [0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94 ]
+    purge-requests-minutes: 5
+    tool-item: 288  
+    mover-item: 346  

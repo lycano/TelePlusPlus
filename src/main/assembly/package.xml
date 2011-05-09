@@ -16,7 +16,14 @@
                 <include>CHANGELOG*</include>
             </includes>
         </fileSet>
-    </fileSets>
+        <fileSet>
+            <directory>${project.basedir}/TelePlusPlus/</directory>
+            <outputDirectory>/TelePlusPlus/</outputDirectory>
+            <includes>
+                <include>config.yml</include>
+            </includes>
+        </fileSet>
+    </fileSets>		
     <files>
         <file>
             <source>${project.build.directory}/${artifactId}.jar</source>
