@@ -58,8 +58,10 @@ public final class HelpManager {
             helpPlugin.registerCommand("tp tool", "Get a " + Helper.friendlyBlockType(Material.getMaterial(plugin.settingsManager.toolItem).toString()).toLowerCase() + " to tp yourself around", plugin, plugin.permissionsManager.tool);
             helpPlugin.registerCommand("tp mover", "Get a " + Helper.friendlyBlockType(Material.getMaterial(plugin.settingsManager.moverItem).toString()).toLowerCase() + " to tp others around", plugin, plugin.permissionsManager.mover);
             helpPlugin.registerCommand("tp request [player|x y z] [reason]", "Request tp", plugin, plugin.permissionsManager.request);
-            helpPlugin.registerCommand("tp options <node> <value>", "Get or set Options-Node", plugin, plugin.permissionsManager.options);
+            helpPlugin.registerCommand("tp options <node> <value>", "Get or set options-node", plugin, plugin.permissionsManager.options);
             helpPlugin.registerCommand("tp version", "Display version", plugin, plugin.permissionsManager.version);
+            helpPlugin.registerCommand("tp help <pagenumber>", "List commands @pagenumber", plugin, plugin.permissionsManager.menu);
+            helpPlugin.registerCommand("tp help <command>", "Search for <command>", plugin, plugin.permissionsManager.menu);
 
             logger.info("[" + plugin.name + "] 'Help' support enabled");
         } else {
@@ -146,14 +148,14 @@ public final class HelpManager {
             }
 
             if (plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.options) && !plugin.settingsManager.disableOptions) {
-                ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp options <node> <value>" + ChatColor.DARK_PURPLE + " - Get or set Options-Node");
+                ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp options <node> <value>" + ChatColor.DARK_PURPLE + " - Get or set options-node");
             }
             
             if (plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.version) && !plugin.settingsManager.disableVersion) {
                 ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp version" + ChatColor.DARK_PURPLE + " - Display version");
             }
             
-            ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp help|menu" + ChatColor.DARK_PURPLE + " - List "+plugin.name+" commands");
+            ChatBlock.sendMessage(player, "  ", ChatColor.WHITE + "/tp [help|menu]" + ChatColor.DARK_PURPLE + " - List "+plugin.name+" commands");
 
             ChatBlock.sendBlank(player);
         }        
