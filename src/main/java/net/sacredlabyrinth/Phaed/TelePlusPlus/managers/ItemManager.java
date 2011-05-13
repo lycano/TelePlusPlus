@@ -18,11 +18,11 @@ public class ItemManager {
     }
     
     public List<Integer> getThoughBlocks() {
-        return plugin.sm.throughBlocks;
+        return plugin.settingsManager.throughBlocks;
     }
     
     public boolean isThroughBlock(int itemid) {
-        return plugin.sm.throughBlocks.contains(itemid);
+        return plugin.settingsManager.throughBlocks.contains(itemid);
     }
     
     public boolean PutItemInHand(Player player, Material item) {

@@ -35,10 +35,10 @@ public class GlassedManager {
     }
     
     public boolean addGlassed(Player player, Block block) {
-        plugin.gm.removeGlassedNotImmunity(player);
+        plugin.glassedManager.removeGlassedNotImmunity(player);
 
         if (!block.getType().equals(Material.AIR)) {
-            if (plugin.sm.fallImmunity) {
+            if (plugin.settingsManager.fallImmunity) {
                 fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
             }
             
@@ -48,7 +48,7 @@ public class GlassedManager {
         block.setType(Material.GLASS);
         glassed.put(player.getName(), block.getLocation().toVector());
 
-        if (plugin.sm.fallImmunity) {
+        if (plugin.settingsManager.fallImmunity) {
             if (fallDamageImmune.containsKey(player.getName())) {
                 int current = fallDamageImmune.get(player.getName());        
                 plugin.getServer().getScheduler().cancelTask(current);
@@ -64,7 +64,7 @@ public class GlassedManager {
         if (glassed.containsKey(player.getName())) {
             removeGlassedNotImmunity(player);
 
-            if (plugin.sm.fallImmunity) {
+            if (plugin.settingsManager.fallImmunity) {
                 fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
             }
         }
@@ -95,6 +95,6 @@ public class GlassedManager {
             public void run() {
                 fallDamageImmune.remove(name);
             }
-        }, plugin.sm.fallImmunitySeconds * 20L);
+        }, plugin.settingsManager.fallImmunitySeconds * 20L);
     }
 }

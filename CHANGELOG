@@ -1,0 +1,44 @@
+Version 1.3.4
+* fixed help support
+* changed help display
+* reformated all classes
+* changed maven dependencies to support higher versions
+* added new command /<command> help
+* /<command> help <subcommand> triggers help search
+* added new command alias for help /<command> menu
+* added new configureable option disable.menu
+* added new property disable.tp.lightning, tpp.tp.lightning permissionNode
+* added permission node tpp.tp.lightning
+* added configureable option log.strikeLightningNotFound (log.sleNotFound) if you intend to use it with CB < 766
+* added new command /<command> options <node> <value>; For now it is possible to set boolean values (WIP); Note that this is currently not per User
+* added new property disable.admin.options, tpp.admin.options permissionNode
+* added new command /<command> version - Display version; This option is accessible for all
+* added new property disable.version, tpp.version permissionNode
+* added config.yml as ressource to jar package
+	
+Version 1.3.3a
+* mavenized project
+* compatible with b684-733
+
+Version 1.3.3
+* Upgraded for 677
+
+Version 1.3.2a - Merged lycano's fixes for 670:
+* fixed /tp mover|tool bug when using bukkit #670
+* fixed "preventing the user from duping items FEATHER, FISHING_ROD by using commands /tp tool|mover"
+* changed the way of inventory processing in that case (should speed up things a bit)
+(Q&D-way of creating a new variable inside changed function -> needs to be reviewed)
+
+Version 1.3.2
+* Removed GroupManager support, FakePermissions will still work
+* Left clicking with the tool no tps you, and right clicking will pass you through solid objects
+* Mover can now move far away blocks
+* Mover now preserves items' data/damage
+* Added config options to manually disable any feature
+* Added config options to turn off "say" messages to the player when he uses the different features
+* Fixed error when inventory was empty and tyring to spawn a tool or mover item
+* Fixed bug where it would say bone in /tp clear even though the mover item was changed to something else
+* Changed default mover item to fishing rod
+* Added more passthrough blocks to the default list
+* Always teleport to the middle of the destination block
+* /tp up will now move you 10 blocks up if no height is specified, it will act like /tp top if there is no space above you for a glass block

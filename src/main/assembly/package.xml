@@ -17,7 +17,7 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/TelePlusPlus/</directory>
+            <directory>${project.basedir}/src/main/resources/</directory>
             <outputDirectory>/TelePlusPlus/</outputDirectory>
             <includes>
                 <include>config.yml</include>

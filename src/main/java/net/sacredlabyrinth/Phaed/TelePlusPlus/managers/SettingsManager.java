@@ -1,5 +1,8 @@
 package net.sacredlabyrinth.Phaed.TelePlusPlus.managers;
 
+import java.lang.reflect.Field;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sacredlabyrinth.Phaed.TelePlusPlus.TelePlusPlus;
 
 import java.util.List;
@@ -7,9 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bukkit.util.config.Configuration;
+import org.bukkit.util.config.ConfigurationNode;
 
-public class SettingsManager
-{
+public class SettingsManager {
+    protected static Configuration config;
+    
     public boolean logPlayer;
     public boolean logCoords;
     public boolean logWorld;
@@ -27,6 +32,7 @@ public class SettingsManager
     public boolean logTool;
     public boolean logMover;
     public boolean logRequest;
+    public boolean logSleNotFound;
     
     public boolean notifyPlayer;
     public boolean notifyCoords;
@@ -82,6 +88,11 @@ public class SettingsManager
     public boolean disableTool;
     public boolean disableMover;
     public boolean disableRequest;
+    public boolean disableMenu;
+    public boolean disableLightning;
+    public boolean disableOptions;
+    public boolean disableVersion;
+    
     
     public int settingsFallBlockDistance;
     public List<Integer> throughBlocks;
@@ -95,7 +106,8 @@ public class SettingsManager
     
     public SettingsManager(TelePlusPlus plugin) {
         this.plugin = plugin;
-
+        this.config = plugin.config;
+        
         loadConfiguration();
     }
     
@@ -103,7 +115,6 @@ public class SettingsManager
      * Load the configuration
      */
     public void loadConfiguration() {
-        Configuration config = plugin.getConfiguration();
         config.load();
 
         List<Integer> defaultThroughBlocks = new ArrayList<Integer>(Arrays.asList(new Integer[]{
@@ -127,6 +138,7 @@ public class SettingsManager
         logTool = config.getBoolean("log.mod.tool", false);
         logMover = config.getBoolean("log.mod.mover", false);
         logRequest = config.getBoolean("log.request", false);
+        logSleNotFound = config.getBoolean("log.sleNotFound", true);
 
         notifyPlayer = config.getBoolean("notify.tp.player", false);
         notifyCoords = config.getBoolean("notify.tp.coords", false);
@@ -182,6 +194,10 @@ public class SettingsManager
         disableTool = config.getBoolean("disable.mod.tool", false);
         disableMover = config.getBoolean("disable.mod.mover", false);
         disableRequest = config.getBoolean("disable.request", false);
+        disableMenu = config.getBoolean("disable.menu", false);
+        disableLightning = config.getBoolean("disable.tp.lightning", true);
+        disableOptions = config.getBoolean("disable.admin.options", false);
+        disableVersion = config.getBoolean("disable.version", false);
 
         settingsFallBlockDistance = config.getInt("glassed.fall-block-distance", 10);
         fallImmunity = config.getBoolean("glassed.fall-immunity", false);
@@ -192,5 +208,21 @@ public class SettingsManager
 
         moverItem = config.getInt("settings.mover-item", 346);
         toolItem = config.getInt("settings.tool-item", 288);
+    }
+    
+    public Object getProperty(String path) {
+        Object node = this.config.getProperty(path);
+        
+        return node;
+    }
+    
+    public void setProperty(String path, Object value) {
+        this.config.setProperty(path, value);
+        
+        // save Configuration
+        config.save();
+        
+        // reload Settings
+        loadConfiguration();
     }
 }

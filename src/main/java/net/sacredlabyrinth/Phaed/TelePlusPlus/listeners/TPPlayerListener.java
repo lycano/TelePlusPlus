@@ -33,17 +33,17 @@ public class TPPlayerListener extends PlayerListener {
         Location from = event.getFrom();
         Location to = event.getTo();
 
-        if (plugin.gm.isGlassed(player)) {
+        if (plugin.glassedManager.isGlassed(player)) {
             if (from.toVector().toBlockVector().equals(to.toVector().toBlockVector())) {
                 return;
             }
 
             Block footblock = player.getWorld().getBlockAt(to.getBlockX(), to.getBlockY() - 1, to.getBlockZ());
-            if (footblock.getType().equals(Material.AIR) || plugin.gm.isGlassedBlock(player, footblock)) {
+            if (footblock.getType().equals(Material.AIR) || plugin.glassedManager.isGlassedBlock(player, footblock)) {
                 return;
             }
 
-            plugin.gm.removeGlassed(player);
+            plugin.glassedManager.removeGlassed(player);
             
             return;
         }
@@ -57,19 +57,19 @@ public class TPPlayerListener extends PlayerListener {
             ItemStack item = event.getItem();
 
             if (item != null) {
-                if (item.getType().equals(Material.getMaterial(plugin.sm.moverItem)) && plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover) {
-                    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+                if (item.getType().equals(Material.getMaterial(plugin.settingsManager.moverItem)) && plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.mover) && !plugin.settingsManager.disableMover) {
+                    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.itemManager.getThoughBlocks());
                     Block block = aiming.getTargetBlock();
 
                     if (block == null || block.getY() <= 1) {
                         player.sendMessage(ChatColor.RED + "Not pointing to valid block");
                     } else {
-                        if (!plugin.mm.addMovedBlock(player, block)) {
+                        if (!plugin.moverManager.addMovedBlock(player, block)) {
                             ChatBlock.sendMessage(player, ChatColor.RED + "Cannot add block, you have tagged entities");
                             return;
                         }
                         
-                        if (plugin.sm.sayMover) {
+                        if (plugin.settingsManager.sayMover) {
                             player.sendMessage(ChatColor.DARK_PURPLE + "Block tagged");
                         }
                         
@@ -77,8 +77,8 @@ public class TPPlayerListener extends PlayerListener {
                     }
                 }
 
-                if (item.getType().equals(Material.getMaterial(plugin.sm.toolItem)) && plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool) {
-                    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+                if (item.getType().equals(Material.getMaterial(plugin.settingsManager.toolItem)) && plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.tool) && !plugin.settingsManager.disableTool) {
+                    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.itemManager.getThoughBlocks());
                     Block block = aiming.getTargetBlock();
 
                     if (block == null || block.getY() <= 1) {
@@ -86,21 +86,21 @@ public class TPPlayerListener extends PlayerListener {
                     } else {
                         Location loc = new Location(block.getWorld(), block.getX(), block.getY() + 1, block.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
 
-                        if (!plugin.tm.teleport(player, loc)) {
+                        if (!plugin.teleportManager.teleport(player, loc)) {
                             player.sendMessage(ChatColor.RED + "No free space available for teleport");
                             return;
                         }
 
-                        String msg = player.getName() + " tool jumped to " + "[" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
-                        if (plugin.sm.logTool) {
-                            plugin.cm.logTp(player, msg);
+                        String msg = player.getName() + " tool jumped to " + "[" + plugin.commandManager.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+                        if (plugin.settingsManager.logTool) {
+                            plugin.commandManager.logTp(player, msg);
                         }
                         
-                        if (plugin.sm.notifyTool) {
-                            plugin.cm.notifyTp(player, msg);
+                        if (plugin.settingsManager.notifyTool) {
+                            plugin.commandManager.notifyTp(player, msg);
                         }
                         
-                        if (plugin.sm.sayTool) {
+                        if (plugin.settingsManager.sayTool) {
                             player.sendMessage(ChatColor.DARK_PURPLE + "Jumped");
                         }
 
@@ -114,11 +114,11 @@ public class TPPlayerListener extends PlayerListener {
 
             if (clicked != null) {
                 if (clicked.getType().equals(Material.GLASS)) {
-                    if (plugin.gm.isGlassedBlock(player, clicked)) {
-                        Block fallblock = player.getWorld().getBlockAt(clicked.getX(), clicked.getY() - plugin.sm.settingsFallBlockDistance, clicked.getZ());
+                    if (plugin.glassedManager.isGlassedBlock(player, clicked)) {
+                        Block fallblock = player.getWorld().getBlockAt(clicked.getX(), clicked.getY() - plugin.settingsManager.settingsFallBlockDistance, clicked.getZ());
 
-                        if (!plugin.gm.addGlassed(player, fallblock)) {
-                            plugin.gm.removeGlassed(player);
+                        if (!plugin.glassedManager.addGlassed(player, fallblock)) {
+                            plugin.glassedManager.removeGlassed(player);
                         }
                     }
                 }
@@ -127,8 +127,8 @@ public class TPPlayerListener extends PlayerListener {
             ItemStack item = event.getItem();
 
             if (item != null) {
-                if (item.getType().equals(Material.getMaterial(plugin.sm.toolItem)) && plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool) {
-                    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+                if (item.getType().equals(Material.getMaterial(plugin.settingsManager.toolItem)) && plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.tool) && !plugin.settingsManager.disableTool) {
+                    TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.itemManager.getThoughBlocks());
                     Block block = aiming.getTargetBlock();
 
                     if (block == null || block.getY() <= 1) {
@@ -143,7 +143,7 @@ public class TPPlayerListener extends PlayerListener {
                                 return;
                             }
 
-                            if (plugin.tm.blockIsSafe(block)) {
+                            if (plugin.teleportManager.blockIsSafe(block)) {
                                 Location to = new Location(block.getWorld(), block.getX(), block.getY() + 1, block.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
 
                                 to.setX(to.getX() + .5D);
@@ -155,17 +155,17 @@ public class TPPlayerListener extends PlayerListener {
 
                                 player.teleport(to);
 
-                                String msg = player.getName() + " passed through " + Math.round(Helper.distance(from, to)) + " blocks to " + "[" + plugin.cm.printWorld(to.getWorld().getName()) + to.getBlockX() + " " + to.getBlockY() + " " + to.getBlockZ() + "]";
+                                String msg = player.getName() + " passed through " + Math.round(Helper.distance(from, to)) + " blocks to " + "[" + plugin.commandManager.printWorld(to.getWorld().getName()) + to.getBlockX() + " " + to.getBlockY() + " " + to.getBlockZ() + "]";
 
-                                if (plugin.sm.logTool) {
-                                    plugin.cm.logTp(player, msg);
+                                if (plugin.settingsManager.logTool) {
+                                    plugin.commandManager.logTp(player, msg);
                                 }
                                 
-                                if (plugin.sm.notifyTool) {
-                                    plugin.cm.notifyTp(player, msg);
+                                if (plugin.settingsManager.notifyTool) {
+                                    plugin.commandManager.notifyTp(player, msg);
                                 }
                                 
-                                if (plugin.sm.sayTool) {
+                                if (plugin.settingsManager.sayTool) {
                                     player.sendMessage(ChatColor.DARK_PURPLE + "Passed through " + Math.round(Helper.distance(from, to)) + " blocks");
                                 }
 
@@ -182,11 +182,11 @@ public class TPPlayerListener extends PlayerListener {
                     }
                 }
 
-                if (item.getType().equals(Material.getMaterial(plugin.sm.moverItem)) && plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover) {
-                    HashSet<Entity> entities = plugin.mm.getMovedEntities(player);
+                if (item.getType().equals(Material.getMaterial(plugin.settingsManager.moverItem)) && plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.mover) && !plugin.settingsManager.disableMover) {
+                    HashSet<Entity> entities = plugin.moverManager.getMovedEntities(player);
 
                     if (entities.size() > 0) {
-                        TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+                        TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.itemManager.getThoughBlocks());
                         Block block = aiming.getTargetBlock();
 
                         if (block == null) {
@@ -200,24 +200,24 @@ public class TPPlayerListener extends PlayerListener {
                                 tps.add(entity);
                             }
 
-                            if (!plugin.tm.teleport(tps, loc)) {
+                            if (!plugin.teleportManager.teleport(tps, loc)) {
                                 player.sendMessage(ChatColor.RED + "No free space available for teleport");
                                 return;
                             }
 
-                            plugin.mm.setEntitiesDirty();
+                            plugin.moverManager.setEntitiesDirty();
                             
-                            String msg = player.getName() + " moved " + Helper.entityArrayString(tps) + " to [" + plugin.cm.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
+                            String msg = player.getName() + " moved " + Helper.entityArrayString(tps) + " to [" + plugin.commandManager.printWorld(loc.getWorld().getName()) + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]";
 
-                            if (plugin.sm.logMover) {
-                                plugin.cm.logTp(player, msg);
+                            if (plugin.settingsManager.logMover) {
+                                plugin.commandManager.logTp(player, msg);
                             }
                             
-                            if (plugin.sm.notifyMover) {
-                                plugin.cm.notifyTp(player, msg);
+                            if (plugin.settingsManager.notifyMover) {
+                                plugin.commandManager.notifyTp(player, msg);
                             }
                             
-                            if (plugin.sm.sayMover) {
+                            if (plugin.settingsManager.sayMover) {
                                 player.sendMessage(ChatColor.DARK_PURPLE + "Moved");
                             }
 
@@ -225,26 +225,26 @@ public class TPPlayerListener extends PlayerListener {
                         }
                     }
 
-                    Block block = plugin.mm.getMovedBlock(player);
+                    Block block = plugin.moverManager.getMovedBlock(player);
 
                     if (block != null) {
                         Material mat = block.getType();
                         byte data = block.getData();
 
-                        TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.im.getThoughBlocks());
+                        TargetBlock aiming = new TargetBlock(player, 3000, 0.2, plugin.itemManager.getThoughBlocks());
                         Block target = aiming.getFaceBlock();
 
                         if (target != null) {
-                            if (plugin.im.isThroughBlock(target.getTypeId())) {
+                            if (plugin.itemManager.isThroughBlock(target.getTypeId())) {
                                 block.setType(Material.AIR);
                                 target.setType(mat);
                                 target.setData(data);
 
-                                if (plugin.sm.sayMover) {
+                                if (plugin.settingsManager.sayMover) {
                                     player.sendMessage(ChatColor.DARK_PURPLE + "Moved");
                                 }
 
-                                plugin.mm.relocateMovedBlock(player, target);
+                                plugin.moverManager.relocateMovedBlock(player, target);
                             } else {
                                 player.sendMessage(ChatColor.RED + "There is something in the way");
                                 return;

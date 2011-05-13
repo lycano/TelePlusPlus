@@ -89,7 +89,7 @@ public class RequestsManager {
                 for (Request req : requests) {
                     req.incrementMinutes();
 
-                    if (req.getMinutes() == plugin.sm.purgeRequestMinutes) {
+                    if (req.getMinutes() == plugin.settingsManager.purgeRequestMinutes) {
                         purged.add(req);
                     }
                 }
@@ -103,7 +103,7 @@ public class RequestsManager {
         Player[] online = plugin.getServer().getOnlinePlayers();
 
         for (Player player : online) {
-            if (plugin.pm.hasPermission(player, plugin.pm.take) && !plugin.sm.disableRequest) {
+            if (plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.take) && !plugin.settingsManager.disableRequest) {
                 return true;
             }
         }
@@ -115,7 +115,7 @@ public class RequestsManager {
         Player[] online = plugin.getServer().getOnlinePlayers();
 
         for (Player player : online) {
-            if (plugin.pm.hasPermission(player, plugin.pm.take) && !plugin.sm.disableRequest) {
+            if (plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.take) && !plugin.settingsManager.disableRequest) {
                 ChatBlock.sendMessage(player, ChatColor.DARK_PURPLE + "[tp] " + ChatColor.WHITE + "[" + req.getPlayerName() + "] " + ChatColor.YELLOW + "requests tp to " + ChatColor.WHITE + (req.getLocation() != null ? Helper.formatLocation(req.getLocation()) : "[" + req.getTargetName() + "]"));
                 ChatBlock.sendMessage(player, ChatColor.DARK_PURPLE + "[tp] " + ChatColor.YELLOW + "Reason: " + req.getReason());
                 ChatBlock.sendMessage(player, ChatColor.DARK_PURPLE + "[tp] " + ChatColor.YELLOW + "/tp take");

@@ -20,7 +20,8 @@ log:
         mass: true         
         tool: true
         mover: true
-    request: true       
+    request: true
+    sleNotFound: true
 notify:
     tp:
         player: true
@@ -75,7 +76,8 @@ disable:
         toggle: false
         clear: false
         back: false
-        origin: false      
+        origin: false
+        lightning: true
     others:
         player: false
         coords: false
@@ -85,12 +87,16 @@ disable:
         top: false
         up: false
         jump: false
+    admin:
+        options: false
     mod:
         above: false
         mass: false         
         tool: false
         mover: false
-    request: false        
+    request: false
+    menu: false
+    version: false
 glassed:
     fall-block-distance: 5
     fall-immunity: true   
@@ -99,4 +105,4 @@ settings:
     through-blocks: [0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94 ]
     purge-requests-minutes: 5
     tool-item: 288  
-    mover-item: 346  
+    mover-item: 346

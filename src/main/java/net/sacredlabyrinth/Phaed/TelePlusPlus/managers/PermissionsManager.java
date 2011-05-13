@@ -21,6 +21,7 @@ public class PermissionsManager {
     public final String back = "tpp.tp.back";
     public final String origin = "tpp.tp.origin";
     public final String clear = "tpp.tp.clear";
+    public final String lightning = "tpp.tp.lightning";
     public final String othersPlayer = "tpp.others.player";
     public final String othersCoords = "tpp.others.coords";
     public final String world = "tpp.world.tp";
@@ -38,6 +39,8 @@ public class PermissionsManager {
     public final String bypassNotify = "tpp.admin.bypass.notify";    
     public final String bypassNoTp = "tpp.admin.bypass.notp";
     public final String request = "tpp.request";
+    public final String options = "tpp.admin.options";
+    public final String version = "tpp.version";
     
     public PermissionsManager(TelePlusPlus plugin) {
         this.plugin = plugin;

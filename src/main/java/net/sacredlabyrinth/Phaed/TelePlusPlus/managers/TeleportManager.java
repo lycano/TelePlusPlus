@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.TelePlusPlus.managers;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import org.bukkit.Location;
@@ -88,7 +89,19 @@ public class TeleportManager {
                 TeleHistory.pushLocation(player, player.getLocation());
             }
             
-            entity.teleport(new Location(world, x, y, z, destination.getYaw(), destination.getPitch()));
+            Location targetLocation = new Location(world, x, y, z, destination.getYaw(), destination.getPitch());
+            
+            entity.teleport(targetLocation);
+            try {
+                String methodName = world.getClass().getMethod("strikeLightningEffect", Location.class).getName();
+                if ((!methodName.isEmpty()) && (entity instanceof Player) && (!plugin.settingsManager.disableLightning) && (plugin.permissionsManager.hasPermission((Player) entity, plugin.permissionsManager.lightning))) {
+                    world.strikeLightningEffect(targetLocation);
+                }
+            } catch (Exception ex) { 
+                if (plugin.settingsManager.logSleNotFound) {
+                    TppLogger.Log("strikeLightningEffect() not found. Is your craftbukkit build up to date?");
+                }
+            }
         }
 
         return true;
@@ -97,7 +110,7 @@ public class TeleportManager {
     private boolean blockIsAboveAir(World world, double x, double y, double z) {
         Material mat = world.getBlockAt((int) Math.floor(x), (int) Math.floor(y - 1.0D), (int) Math.floor(z)).getType();
 
-        return plugin.sm.throughBlocks.contains(mat.getId());
+        return plugin.settingsManager.throughBlocks.contains(mat.getId());
     }
     
     public boolean blockIsSafe(Block block) {
@@ -108,7 +121,7 @@ public class TeleportManager {
         Material mat1 = world.getBlockAt((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z)).getType();
         Material mat2 = world.getBlockAt((int) Math.floor(x), (int) Math.floor(y + 1.0D), (int) Math.floor(z)).getType();
     
-        return (plugin.sm.throughBlocks.contains(mat1.getId())) && (plugin.sm.throughBlocks.contains(mat2.getId()));
+        return (plugin.settingsManager.throughBlocks.contains(mat1.getId())) && (plugin.settingsManager.throughBlocks.contains(mat2.getId()));
     }
     
     public Location calculateSmartLocation(Player player) {

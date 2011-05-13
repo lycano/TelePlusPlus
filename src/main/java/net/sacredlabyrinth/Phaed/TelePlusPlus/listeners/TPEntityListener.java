@@ -28,15 +28,15 @@ public class TPEntityListener extends EntityListener {
             if (event.getEntity() instanceof Player) {
                 Player player = (Player) event.getEntity();
 
-                if (plugin.pm.hasPermission(player, plugin.pm.tool) && !plugin.sm.disableTool && player.getItemInHand().getType().equals(Material.getMaterial(plugin.sm.toolItem))) {
+                if (plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.tool) && !plugin.settingsManager.disableTool && player.getItemInHand().getType().equals(Material.getMaterial(plugin.settingsManager.toolItem))) {
                     event.setCancelled(true);
                 }
 
-                if (plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover && player.getItemInHand().getType().equals(Material.getMaterial(plugin.sm.moverItem))) {
+                if (plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.mover) && !plugin.settingsManager.disableMover && player.getItemInHand().getType().equals(Material.getMaterial(plugin.settingsManager.moverItem))) {
                     event.setCancelled(true);
                 }
 
-                if (plugin.gm.isFallDamageImmune(player)) {
+                if (plugin.glassedManager.isFallDamageImmune(player)) {
                     event.setCancelled(true);
                 }
             }
@@ -49,13 +49,13 @@ public class TPEntityListener extends EntityListener {
                 Entity entity = sub.getEntity();
                 ItemStack item = player.getItemInHand();
 
-                if (item.getType().equals(Material.getMaterial(plugin.sm.moverItem)) && plugin.pm.hasPermission(player, plugin.pm.mover) && !plugin.sm.disableMover) {
+                if (item.getType().equals(Material.getMaterial(plugin.settingsManager.moverItem)) && plugin.permissionsManager.hasPermission(player, plugin.permissionsManager.mover) && !plugin.settingsManager.disableMover) {
                     event.setCancelled(true);
 
-                    if (plugin.mm.addMovedEntity(player, entity)) {
-                        int count = plugin.mm.getEntityCount(player);
+                    if (plugin.moverManager.addMovedEntity(player, entity)) {
+                        int count = plugin.moverManager.getEntityCount(player);
 
-                        if (plugin.sm.sayMover) {
+                        if (plugin.settingsManager.sayMover) {
                             if (entity instanceof Player) {
                                 player.sendMessage(ChatColor.DARK_PURPLE + "Player tagged (" + count + ")");
                             } else if (entity instanceof Monster) {
@@ -69,7 +69,7 @@ public class TPEntityListener extends EntityListener {
                             }
                         }
                     } else {
-                        if (plugin.sm.sayMover) {
+                        if (plugin.settingsManager.sayMover) {
                             player.sendMessage(ChatColor.RED + "Already tagged");
                         }
                     }
