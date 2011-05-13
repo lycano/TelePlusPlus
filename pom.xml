@@ -77,8 +77,8 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>me.taylorkelly.help</groupId>
-      <artifactId>Help</artifactId>
+      <groupId>me.taylorkelly</groupId>
+      <artifactId>help</artifactId>
       <version>[0.2,)</version>
       <type>jar</type>
       <scope>compile</scope>
