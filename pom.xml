@@ -6,6 +6,12 @@
   <name>TelePlusPlus</name>
   <description>The complete teleporting solution for bukkit powered servers</description>
   <url>https://github.com/lycano/TelePlusPlus</url>
+  <repositories>
+    <repository>
+      <id>luricos.de-repo</id>
+      <url>http://repo.luricos.de/bukkit-plugins/</url>
+    </repository>
+  </repositories>
   <issueManagement>
     <system>GitHub</system>
   	<url>https://github.com/lycano/TelePlusPlus/issues</url>
